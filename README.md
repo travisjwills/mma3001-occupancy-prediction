@@ -72,10 +72,27 @@ and an honest discussion of what the model is and isn't actually learning.
 
 ## Next steps
 
-- [ ] Hyperparameter tuning / simpler alternative models (logistic regression,
       gradient boosting) for the "credible alternatives" comparison
-- [ ] Runtime/memory profiling for the optimisation section of the report
 - [ ] Figures: time-series plot of CO2 vs headcount, feature importance chart,
       confusion matrices
 - [ ] Headcount regression as a secondary framing (data already supports it)
 - [ ] Write up full report (engineering context, limitations, AI use disclosure)
+
+## Optimisation & final design choice
+
+After comparing accuracy, runtime, memory, and hyperparameter-tuning
+behaviour (`docs/optimisation.md`), **Logistic Regression is the recommended
+final model**, not the Random Forest used for interpretation/feature
+analysis above:
+
+| Model | F1 | ROC-AUC | Fit time | Predict/row | Model size |
+|---|---|---|---|---|---|
+| Logistic Regression | 0.756 | 0.708 | 11.3 ms | 1.1 µs | 1.8 KB |
+| Random Forest | 0.763 | 0.736 | 716.0 ms | 91.2 µs | 4.2 MB |
+
+Random Forest's accuracy edge is within cross-validation noise; Logistic
+Regression's efficiency advantage (60-80x faster, ~2300x smaller) is large
+and consistent, which matters more for a real low-cost sensor deployment.
+Hyperparameter tuning (RandomizedSearchCV) was also tried and made held-out
+performance *worse* — documented as a limitation of the ~5-week training
+window rather than hidden.
