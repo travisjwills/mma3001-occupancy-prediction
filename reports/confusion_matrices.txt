@@ -1,0 +1,8 @@
+Baseline (CO2 threshold)
+[[306  78]
+ [329 107]]
+
+Random Forest
+[[231 153]
+ [ 73 363]]
+

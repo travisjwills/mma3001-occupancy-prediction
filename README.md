@@ -55,3 +55,27 @@ This project was developed with assistance from Claude (Anthropic). See
 `docs/ai_use.md` for the detailed disclosure required by the project brief
 (tools used, tasks, level of contribution, verification steps, and decisions
 that remained the student's own).
+
+## Key results (so far)
+
+Single-room occupancy classification (sensor 869 / zone `3e5a14df-...`,
+4,099 samples, chronological 80/20 split):
+
+| Model | F1 | ROC-AUC |
+|---|---|---|
+| Baseline: CO2 threshold rule | 0.345 | 0.568 |
+| Random Forest (env + time features) | 0.763 | 0.736 |
+| Random Forest (env features only) | 0.738 | 0.667 |
+
+See `docs/model_results.md` for full results, cross-validation stability,
+and an honest discussion of what the model is and isn't actually learning.
+
+## Next steps
+
+- [ ] Hyperparameter tuning / simpler alternative models (logistic regression,
+      gradient boosting) for the "credible alternatives" comparison
+- [ ] Runtime/memory profiling for the optimisation section of the report
+- [ ] Figures: time-series plot of CO2 vs headcount, feature importance chart,
+      confusion matrices
+- [ ] Headcount regression as a secondary framing (data already supports it)
+- [ ] Write up full report (engineering context, limitations, AI use disclosure)
