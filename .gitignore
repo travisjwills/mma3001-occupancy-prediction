@@ -1,0 +1,17 @@
+# data (too large / not for version control — see docs/data_audit.md for provenance)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*.csv
+data/processed/*.parquet
+!data/processed/.gitkeep
+
+# python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+*.egg-info/
+
+# OS
+.DS_Store
