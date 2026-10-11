@@ -96,3 +96,17 @@ and consistent, which matters more for a real low-cost sensor deployment.
 Hyperparameter tuning (RandomizedSearchCV) was also tried and made held-out
 performance *worse* — documented as a limitation of the ~5-week training
 window rather than hidden.
+
+## Figures
+
+Report/slide-ready figures (300 dpi PNG) are in `reports/figures/`, generated
+by `src/make_figures.py`:
+
+1. `01_co2_vs_headcount.png` — one week of CO2 vs headcount, showing the
+   physical relationship the whole project rests on
+2. `02_sensor_zone_correlation.png` — the 5×5 sensor/zone correlation matrix
+   from the data audit (visualises why only 1 pair was usable)
+3. `03_model_comparison_f1.png` — baseline vs all 3 ML models, F1 on test set
+4. `04_feature_importance.png` — Random Forest feature importances
+5. `05_cv_stability.png` — per-fold F1 across 5-fold TimeSeriesSplit CV
+6. `06_accuracy_vs_cost.png` — accuracy vs. inference-time trade-off
