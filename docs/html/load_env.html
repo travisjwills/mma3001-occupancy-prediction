@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module load_env</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">load_env</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/home/claude/work/mma3001-occupancy-prediction/src/load_env.py">/home/claude/work/mma3001-occupancy-prediction/src/load_env.py</a></td></tr></table>
+    <p><span class="code">Load&nbsp;and&nbsp;resample&nbsp;the&nbsp;5-sensor&nbsp;environmental&nbsp;feed.<br>
+&nbsp;<br>
+The&nbsp;source&nbsp;file&nbsp;(`5EnvSensor_MayToDec2024_180kRows.csv`)&nbsp;stores&nbsp;one&nbsp;row&nbsp;per<br>
+sensor&nbsp;reading&nbsp;*event*,&nbsp;with&nbsp;all&nbsp;variables&nbsp;for&nbsp;that&nbsp;reading&nbsp;bundled&nbsp;as&nbsp;a&nbsp;JSON<br>
+blob&nbsp;in&nbsp;the&nbsp;`jsondata`&nbsp;column,&nbsp;e.g.:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[{"values":&nbsp;[{"time":&nbsp;1702273965,&nbsp;"value":&nbsp;603}],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"variable":&nbsp;{"name":&nbsp;"Carbon&nbsp;dioxide",&nbsp;"unit":&nbsp;"ppm",&nbsp;...}},&nbsp;...]<br>
+&nbsp;<br>
+Each&nbsp;row&nbsp;typically&nbsp;contains&nbsp;~10&nbsp;variables&nbsp;(Battery,&nbsp;CO2,&nbsp;Humidity,<br>
+Formaldehyde,&nbsp;Pressure,&nbsp;Temperature,&nbsp;LVOC,&nbsp;PM1/2.5/4/10)&nbsp;captured&nbsp;at&nbsp;the&nbsp;same<br>
+timestamp.&nbsp;We&nbsp;flatten&nbsp;this&nbsp;into&nbsp;a&nbsp;tidy&nbsp;long&nbsp;table,&nbsp;then&nbsp;pivot&nbsp;to&nbsp;wide.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="ast.html">ast</a><br>
+</td><td class="multicolumn"><a href="json.html">json</a><br>
+</td><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-load_env_long"><strong>load_env_long</strong></a>(path: 'str', nrows: 'int | None' = None) -&gt; 'pd.DataFrame'</dt><dd><span class="code">Read&nbsp;the&nbsp;raw&nbsp;env&nbsp;sensor&nbsp;file&nbsp;and&nbsp;flatten&nbsp;into&nbsp;long&nbsp;format.<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+pd.DataFrame<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Columns:&nbsp;sensorid,&nbsp;timestamp&nbsp;(UTC),&nbsp;variable,&nbsp;unit,&nbsp;value</span></dd></dl>
+ <dl><dt><a name="-resample_sensor_variable"><strong>resample_sensor_variable</strong></a>(
+    long_df: 'pd.DataFrame',
+    variable: 'str',
+    freq: 'str' = '15min',
+    start=None,
+    end=None
+) -&gt; 'pd.DataFrame'</dt><dd><span class="code">Pivot&nbsp;one&nbsp;variable&nbsp;(e.g.&nbsp;'Carbon&nbsp;dioxide')&nbsp;to&nbsp;a&nbsp;regular-interval&nbsp;wide<br>
+table:&nbsp;index&nbsp;=&nbsp;timestamp,&nbsp;columns&nbsp;=&nbsp;sensorid,&nbsp;values&nbsp;=&nbsp;mean&nbsp;in&nbsp;each&nbsp;bin.</span></dd></dl>
+</td></tr></table>
+</body></html>

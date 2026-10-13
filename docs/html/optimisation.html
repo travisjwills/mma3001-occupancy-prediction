@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module optimisation</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">optimisation</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/home/claude/work/mma3001-occupancy-prediction/src/optimisation.py">/home/claude/work/mma3001-occupancy-prediction/src/optimisation.py</a></td></tr></table>
+    <p><span class="code">Optimisation&nbsp;&amp;&nbsp;performance&nbsp;analysis&nbsp;(brief&nbsp;requirement&nbsp;#6).<br>
+&nbsp;<br>
+Extends&nbsp;the&nbsp;baseline-vs-RandomForest&nbsp;comparison&nbsp;in&nbsp;train_model.py&nbsp;with:<br>
+&nbsp;&nbsp;1.&nbsp;Two&nbsp;more&nbsp;credible&nbsp;alternatives&nbsp;(Logistic&nbsp;Regression,&nbsp;Gradient&nbsp;Boosting)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at&nbsp;default&nbsp;settings,&nbsp;so&nbsp;the&nbsp;"alternative&nbsp;solutions"&nbsp;comparison&nbsp;isn't<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;just&nbsp;one&nbsp;ML&nbsp;model&nbsp;vs&nbsp;one&nbsp;heuristic.<br>
+&nbsp;&nbsp;2.&nbsp;Hyperparameter&nbsp;tuning&nbsp;of&nbsp;the&nbsp;Random&nbsp;Forest&nbsp;via&nbsp;RandomizedSearchCV&nbsp;with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TimeSeriesSplit&nbsp;(not&nbsp;plain&nbsp;k-fold&nbsp;—&nbsp;see&nbsp;train_model.py&nbsp;for&nbsp;why),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;measuring&nbsp;whether&nbsp;tuning&nbsp;is&nbsp;actually&nbsp;worth&nbsp;its&nbsp;extra&nbsp;compute&nbsp;cost.<br>
+&nbsp;&nbsp;3.&nbsp;Runtime&nbsp;profiling:&nbsp;fit&nbsp;time&nbsp;and&nbsp;per-prediction&nbsp;inference&nbsp;time&nbsp;for&nbsp;every<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model&nbsp;(averaged&nbsp;over&nbsp;repeated&nbsp;runs).<br>
+&nbsp;&nbsp;4.&nbsp;Memory&nbsp;profiling:&nbsp;peak&nbsp;memory&nbsp;during&nbsp;training&nbsp;(tracemalloc)&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on-disk&nbsp;model&nbsp;size&nbsp;(pickle).<br>
+&nbsp;&nbsp;5.&nbsp;A&nbsp;rough&nbsp;arithmetic-cost&nbsp;estimate&nbsp;for&nbsp;the&nbsp;Random&nbsp;Forest,&nbsp;since&nbsp;its&nbsp;cost<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;isn't&nbsp;a&nbsp;simple&nbsp;closed-form&nbsp;FLOP&nbsp;count&nbsp;the&nbsp;way&nbsp;a&nbsp;linear&nbsp;model's&nbsp;is.<br>
+&nbsp;<br>
+Outputs:&nbsp;reports/optimisation_comparison.csv,&nbsp;reports/hyperparam_tuning.csv</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+<a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"><a href="pickle.html">pickle</a><br>
+<a href="time.html">time</a><br>
+</td><td class="multicolumn"><a href="tracemalloc.html">tracemalloc</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
+ <dl><dt><a name="-model_size_kb"><strong>model_size_kb</strong></a>(model) -&gt; 'float'</dt></dl>
+ <dl><dt><a name="-peak_memory_mb"><strong>peak_memory_mb</strong></a>(fit_fn)</dt></dl>
+ <dl><dt><a name="-time_fit"><strong>time_fit</strong></a>(model, X_train, y_train)</dt></dl>
+ <dl><dt><a name="-time_predict"><strong>time_predict</strong></a>(model, X_test)</dt></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>DATA_PATH</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/data/processed/room_dataset.csv')<br>
+<strong>FEATURES</strong> = ['Carbon dioxide', 'Temperature', 'Humidity', 'Formaldehyde', 'Light Volatile Organic Compounds', 'Pressure', 'Particulate matter 1', 'Particulate matter 2.5', 'Particulate matter 4', 'Particulate matter 10', 'hour', 'dayofweek', 'is_weekend']<br>
+<strong>N_INFERENCE_REPEATS</strong> = 50<br>
+<strong>N_TIMING_REPEATS</strong> = 5<br>
+<strong>REPORTS_DIR</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/reports')<br>
+<strong>TARGET</strong> = 'occupied'</td></tr></table>
+</body></html>

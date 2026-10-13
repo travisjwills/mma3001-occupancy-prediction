@@ -1,0 +1,20 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>MMA3001 Occupancy Prediction — Code Documentation</title>
+<style>body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;max-width:640px;margin:3rem auto;color:#0b0b0b;background:#fcfcfb;}
+a{color:#2a78d6;text-decoration:none} a:hover{text-decoration:underline}
+li{margin-bottom:0.4rem} p.desc{color:#52514e;font-size:0.92rem;margin:0 0 1.5rem 0.2rem}</style>
+</head><body>
+<h1>Source Code Documentation</h1>
+<p class="desc">Auto-generated from docstrings via Python's built-in <code>pydoc</code> module
+(<code>scripts/build_html_docs.sh</code> regenerates this from <code>src/</code>).</p>
+<ul>
+<li><a href="load_occupancy.html">load_occupancy</a> — parses the occupancy event log, forward-fills to a regular time grid</li>
+<li><a href="load_env.html">load_env</a> — flattens the nested-JSON environmental sensor feed, resamples per variable</li>
+<li><a href="match_sensors_to_zones.html">match_sensors_to_zones</a> — infers sensor&harr;zone pairing via CO2/headcount correlation</li>
+<li><a href="build_dataset.html">build_dataset</a> — joins env + occupancy data into the single-room modelling dataset</li>
+<li><a href="train_model.html">train_model</a> — baseline vs Random Forest, chronological split + TimeSeriesSplit CV</li>
+<li><a href="sensitivity_env_only.html">sensitivity_env_only</a> — checks whether the model relies on time-of-day vs environmental signal</li>
+<li><a href="optimisation.html">optimisation</a> — runtime/memory/accuracy comparison across models, hyperparameter tuning</li>
+<li><a href="make_figures.html">make_figures</a> — generates the report/slide figures</li>
+</ul>
+</body></html>

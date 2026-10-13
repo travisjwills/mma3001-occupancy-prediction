@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module load_occupancy</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">load_occupancy</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/home/claude/work/mma3001-occupancy-prediction/src/load_occupancy.py">/home/claude/work/mma3001-occupancy-prediction/src/load_occupancy.py</a></td></tr></table>
+    <p><span class="code">Load&nbsp;and&nbsp;resample&nbsp;the&nbsp;occupancy&nbsp;sensor&nbsp;log.<br>
+&nbsp;<br>
+The&nbsp;source&nbsp;file&nbsp;(`5occupancySensor_MayToDec2024_9MRows.csv`,&nbsp;delivered&nbsp;as&nbsp;a&nbsp;.zip)<br>
+is&nbsp;an&nbsp;EVENT&nbsp;LOG,&nbsp;not&nbsp;a&nbsp;regular&nbsp;time&nbsp;series:&nbsp;a&nbsp;row&nbsp;is&nbsp;written&nbsp;only&nbsp;when&nbsp;a&nbsp;zone's<br>
+`occupancystatus`&nbsp;changes.&nbsp;To&nbsp;get&nbsp;a&nbsp;value&nbsp;at&nbsp;arbitrary&nbsp;time&nbsp;steps&nbsp;we&nbsp;must<br>
+forward-fill&nbsp;the&nbsp;last&nbsp;known&nbsp;status/headcount&nbsp;between&nbsp;recorded&nbsp;events.<br>
+&nbsp;<br>
+Columns&nbsp;of&nbsp;interest:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;floorspaceid&nbsp;&nbsp;&nbsp;-&nbsp;GUID&nbsp;identifying&nbsp;one&nbsp;of&nbsp;5&nbsp;monitored&nbsp;zones<br>
+&nbsp;&nbsp;&nbsp;&nbsp;occupancystatus&nbsp;-&nbsp;CurrentlyOccupied&nbsp;/&nbsp;RecentlyOccupied&nbsp;/&nbsp;NotOccupied<br>
+&nbsp;&nbsp;&nbsp;&nbsp;headcount&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;integer&nbsp;people&nbsp;count&nbsp;at&nbsp;that&nbsp;event<br>
+&nbsp;&nbsp;&nbsp;&nbsp;collecteddate&nbsp;&nbsp;-&nbsp;timestamp&nbsp;the&nbsp;event&nbsp;was&nbsp;logged&nbsp;(timezone-aware)</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-load_occupancy_events"><strong>load_occupancy_events</strong></a>(path: 'str') -&gt; 'pd.DataFrame'</dt><dd><span class="code">Read&nbsp;the&nbsp;raw&nbsp;occupancy&nbsp;event&nbsp;log&nbsp;into&nbsp;a&nbsp;tidy&nbsp;DataFrame.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+path&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Path&nbsp;to&nbsp;the&nbsp;(already-unzipped)&nbsp;occupancy&nbsp;CSV.<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+pd.DataFrame<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Columns:&nbsp;floorspaceid,&nbsp;occupancystatus,&nbsp;headcount,&nbsp;timestamp&nbsp;(UTC).</span></dd></dl>
+ <dl><dt><a name="-resample_zone_headcount"><strong>resample_zone_headcount</strong></a>(
+    events: 'pd.DataFrame',
+    freq: 'str' = '15min',
+    start: 'str | None' = None,
+    end: 'str | None' = None
+) -&gt; 'pd.DataFrame'</dt><dd><span class="code">Turn&nbsp;the&nbsp;irregular&nbsp;event&nbsp;log&nbsp;into&nbsp;a&nbsp;regular-interval&nbsp;headcount&nbsp;series<br>
+per&nbsp;zone,&nbsp;by&nbsp;forward-filling&nbsp;the&nbsp;last&nbsp;known&nbsp;headcount&nbsp;into&nbsp;each&nbsp;time&nbsp;bin.<br>
+&nbsp;<br>
+Returns&nbsp;a&nbsp;wide&nbsp;DataFrame:&nbsp;index&nbsp;=&nbsp;timestamp,&nbsp;columns&nbsp;=&nbsp;floorspaceid.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>OCC_STATUS_ORDER</strong> = ['NotOccupied', 'RecentlyOccupied', 'CurrentlyOccupied']</td></tr></table>
+</body></html>

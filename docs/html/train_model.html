@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module train_model</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">train_model</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/home/claude/work/mma3001-occupancy-prediction/src/train_model.py">/home/claude/work/mma3001-occupancy-prediction/src/train_model.py</a></td></tr></table>
+    <p><span class="code">Train&nbsp;and&nbsp;validate&nbsp;occupancy-classification&nbsp;models&nbsp;on&nbsp;the&nbsp;single-room<br>
+dataset&nbsp;(data/processed/room_dataset.csv).<br>
+&nbsp;<br>
+Task:&nbsp;predict&nbsp;`occupied`&nbsp;(1&nbsp;=&nbsp;headcount&nbsp;&gt;&nbsp;0)&nbsp;from&nbsp;environmental&nbsp;readings.<br>
+&nbsp;<br>
+Models&nbsp;compared&nbsp;(per&nbsp;brief&nbsp;requirement&nbsp;#4,&nbsp;"Alternative&nbsp;solutions"&nbsp;—&nbsp;at<br>
+least&nbsp;one&nbsp;baseline&nbsp;vs&nbsp;an&nbsp;improved&nbsp;approach):<br>
+&nbsp;&nbsp;1.&nbsp;Baseline:&nbsp;a&nbsp;simple&nbsp;CO2-threshold&nbsp;rule&nbsp;(the&nbsp;classic&nbsp;engineering<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;heuristic&nbsp;for&nbsp;CO2-based&nbsp;occupancy&nbsp;detection).&nbsp;Threshold&nbsp;is&nbsp;chosen&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;TRAIN&nbsp;split&nbsp;only,&nbsp;by&nbsp;scanning&nbsp;candidate&nbsp;values&nbsp;and&nbsp;picking&nbsp;the&nbsp;one<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;maximises&nbsp;train-set&nbsp;F1&nbsp;—&nbsp;i.e.&nbsp;the&nbsp;threshold&nbsp;itself&nbsp;is&nbsp;"fit",&nbsp;but<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;only&nbsp;a&nbsp;single&nbsp;feature&nbsp;and&nbsp;a&nbsp;single&nbsp;parameter,&nbsp;unlike&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;multivariate&nbsp;ML&nbsp;model&nbsp;below.<br>
+&nbsp;&nbsp;2.&nbsp;Improved:&nbsp;a&nbsp;Random&nbsp;Forest&nbsp;classifier&nbsp;using&nbsp;all&nbsp;environmental<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variables&nbsp;+&nbsp;time-of-day/day-of-week&nbsp;features.<br>
+&nbsp;<br>
+Validation&nbsp;(brief&nbsp;requirement&nbsp;#5):<br>
+&nbsp;&nbsp;-&nbsp;Chronological&nbsp;train/test&nbsp;split&nbsp;(80/20)&nbsp;—&nbsp;NOT&nbsp;a&nbsp;random&nbsp;split,&nbsp;because<br>
+&nbsp;&nbsp;&nbsp;&nbsp;adjacent&nbsp;15-min&nbsp;samples&nbsp;are&nbsp;highly&nbsp;autocorrelated;&nbsp;a&nbsp;random&nbsp;split&nbsp;would<br>
+&nbsp;&nbsp;&nbsp;&nbsp;leak&nbsp;near-duplicate&nbsp;information&nbsp;between&nbsp;train&nbsp;and&nbsp;test&nbsp;and&nbsp;overstate<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy.&nbsp;This&nbsp;also&nbsp;mimics&nbsp;the&nbsp;realistic&nbsp;deployment&nbsp;scenario:&nbsp;train&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;past&nbsp;data,&nbsp;predict&nbsp;on&nbsp;future&nbsp;data.<br>
+&nbsp;&nbsp;-&nbsp;TimeSeriesSplit&nbsp;cross-validation&nbsp;(5&nbsp;folds)&nbsp;on&nbsp;the&nbsp;training&nbsp;portion&nbsp;only,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;check&nbsp;how&nbsp;stable&nbsp;each&nbsp;model's&nbsp;performance&nbsp;is&nbsp;over&nbsp;time,&nbsp;not&nbsp;just&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;single&nbsp;lucky&nbsp;split.<br>
+&nbsp;&nbsp;-&nbsp;Metrics:&nbsp;accuracy,&nbsp;precision,&nbsp;recall,&nbsp;F1,&nbsp;ROC-AUC,&nbsp;confusion&nbsp;matrix.<br>
+&nbsp;<br>
+Outputs:&nbsp;reports/model_comparison.csv,&nbsp;reports/confusion_matrices.txt,<br>
+reports/feature_importance.csv,&nbsp;and&nbsp;printed&nbsp;console&nbsp;summary.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-best_co2_threshold"><strong>best_co2_threshold</strong></a>(co2: 'np.ndarray', y: 'np.ndarray') -&gt; 'float'</dt><dd><span class="code">Scan&nbsp;candidate&nbsp;CO2&nbsp;thresholds&nbsp;and&nbsp;return&nbsp;the&nbsp;one&nbsp;maximising&nbsp;F1&nbsp;on<br>
+the&nbsp;given&nbsp;(training)&nbsp;data.&nbsp;This&nbsp;is&nbsp;the&nbsp;full&nbsp;"fitting"&nbsp;procedure&nbsp;for&nbsp;the<br>
+baseline&nbsp;model&nbsp;—&nbsp;a&nbsp;single&nbsp;scalar&nbsp;parameter,&nbsp;versus&nbsp;hundreds&nbsp;of&nbsp;split<br>
+decisions&nbsp;in&nbsp;the&nbsp;Random&nbsp;Forest.</span></dd></dl>
+ <dl><dt><a name="-evaluate"><strong>evaluate</strong></a>(y_true, y_pred, y_score=None) -&gt; 'dict'</dt></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>DATA_PATH</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/data/processed/room_dataset.csv')<br>
+<strong>FEATURES</strong> = ['Carbon dioxide', 'Temperature', 'Humidity', 'Formaldehyde', 'Light Volatile Organic Compounds', 'Pressure', 'Particulate matter 1', 'Particulate matter 2.5', 'Particulate matter 4', 'Particulate matter 10', 'hour', 'dayofweek', 'is_weekend']<br>
+<strong>REPORTS_DIR</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/reports')<br>
+<strong>TARGET</strong> = 'occupied'</td></tr></table>
+</body></html>

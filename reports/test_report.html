@@ -1,0 +1,31 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>MMA3001 Occupancy Prediction - Test Report</title>
+<style>
+  body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background:#fcfcfb; color:#0b0b0b; margin:2rem; }
+  h1 { margin-bottom: 0.2rem; }
+  .meta { color:#52514e; margin-bottom: 1.5rem; }
+  .summary { display:flex; gap:1rem; margin-bottom: 1.5rem; }
+  .stat { background:#f0efec; border-radius:8px; padding:0.75rem 1.25rem; }
+  .stat b { display:block; font-size:1.4rem; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align:left; padding:0.5rem 0.75rem; border-bottom:1px solid #e1e0d9; font-size:0.92rem; }
+  th { background:#f0efec; }
+</style>
+</head>
+<body>
+  <h1>MMA3001 Occupancy Prediction &mdash; Test Report</h1>
+  <p class="meta">Generated 2026-10-13 02:34 UTC
+    from reports/test_results.xml (pytest JUnit output)</p>
+  <div class="summary">
+    <div class="stat"><b>9</b>Total</div>
+    <div class="stat"><b style="color:#1baf7a">9</b>Passed</div>
+    <div class="stat"><b style="color:#e34948">0</b>Failed/Error</div>
+    <div class="stat"><b>0</b>Skipped</div>
+    <div class="stat"><b>1.44s</b>Duration</div>
+  </div>
+  <table>
+    <tr><th>Test</th><th>Status</th><th>Time</th><th>Detail</th></tr>
+    <tr><td>tests.test_load_env::test_load_env_long_flattens_json_correctly</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.007s</td><td></td></tr><tr><td>tests.test_load_env::test_load_env_long_converts_unix_seconds_to_utc_timestamp</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.004s</td><td></td></tr><tr><td>tests.test_load_env::test_resample_sensor_variable_pivots_wide_and_aligns_bins</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.013s</td><td></td></tr><tr><td>tests.test_load_occupancy::test_load_occupancy_events_parses_and_sorts</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.005s</td><td></td></tr><tr><td>tests.test_load_occupancy::test_resample_forward_fills_between_events</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.006s</td><td></td></tr><tr><td>tests.test_load_occupancy::test_resample_grid_is_bin_aligned_regardless_of_start_time</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.006s</td><td></td></tr><tr><td>tests.test_train_model::test_best_co2_threshold_recovers_known_separating_value</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.144s</td><td></td></tr><tr><td>tests.test_train_model::test_evaluate_returns_expected_metrics_for_perfect_prediction</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.016s</td><td></td></tr><tr><td>tests.test_train_model::test_evaluate_handles_single_class_without_crashing</td><td style='color:#1baf7a;font-weight:600'>PASSED</td><td>0.010s</td><td></td></tr>
+  </table>
+</body></html>

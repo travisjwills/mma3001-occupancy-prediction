@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module sensitivity_env_only</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">sensitivity_env_only</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/home/claude/work/mma3001-occupancy-prediction/src/sensitivity_env_only.py">/home/claude/work/mma3001-occupancy-prediction/src/sensitivity_env_only.py</a></td></tr></table>
+    <p><span class="code">Sensitivity&nbsp;check:&nbsp;does&nbsp;the&nbsp;Random&nbsp;Forest&nbsp;actually&nbsp;need&nbsp;the&nbsp;environmental<br>
+variables,&nbsp;or&nbsp;is&nbsp;it&nbsp;mostly&nbsp;riding&nbsp;on&nbsp;time-of-day?<br>
+&nbsp;<br>
+Refits&nbsp;the&nbsp;same&nbsp;model&nbsp;with&nbsp;`hour`/`dayofweek`/`is_weekend`&nbsp;removed,&nbsp;using&nbsp;the<br>
+identical&nbsp;chronological&nbsp;split&nbsp;as&nbsp;train_model.py,&nbsp;and&nbsp;compares&nbsp;F1/ROC-AUC.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-fit_eval"><strong>fit_eval</strong></a>(features, train, test)</dt></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>ALL_FEATURES</strong> = ['Carbon dioxide', 'Temperature', 'Humidity', 'Formaldehyde', 'Light Volatile Organic Compounds', 'Pressure', 'Particulate matter 1', 'Particulate matter 2.5', 'Particulate matter 4', 'Particulate matter 10', 'hour', 'dayofweek', 'is_weekend']<br>
+<strong>DATA_PATH</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/data/processed/room_dataset.csv')<br>
+<strong>ENV_ONLY_FEATURES</strong> = ['Carbon dioxide', 'Temperature', 'Humidity', 'Formaldehyde', 'Light Volatile Organic Compounds', 'Pressure', 'Particulate matter 1', 'Particulate matter 2.5', 'Particulate matter 4', 'Particulate matter 10']<br>
+<strong>REPORTS_DIR</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/reports')<br>
+<strong>TARGET</strong> = 'occupied'</td></tr></table>
+</body></html>

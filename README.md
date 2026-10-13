@@ -4,8 +4,8 @@ Individual project for MMA3001 (Numerical Methods and Machine Learning),
 using Monash Smart Infrastructure's Dataset 2 (Living Lab occupancy and
 environmental sensors, Building 60/69).
 
-**Status:** data audit complete, scope confirmed, modelling in progress.
-See `docs/data_audit.md` for the full data-quality investigation.
+**Status:** data audit, modelling, optimisation, figures, and repo
+infrastructure (tests/docs/license) complete. Written report in progress.
 
 ## Problem
 
@@ -18,95 +18,114 @@ low-cost building monitoring and HVAC/energy management.
 ## Repository structure
 
 ```
-data/raw/         source CSVs (gitignored — too large for git; see below)
-data/processed/   cleaned/resampled intermediate outputs (gitignored)
-src/              reusable data-loading and analysis code
-notebooks/         exploratory notebooks
-reports/           generated tables/figures from src/ scripts
-docs/              data audit log and other written documentation
-tests/             unit tests for src/
+LICENSE                 MIT license for the code (see note on data below)
+README.md               this file
+requirements.txt        Python dependencies
+
+src/                     all pipeline code (run in this order — see below)
+tests/                   pytest unit tests + fixtures (synthetic data, no large files needed)
+scripts/                 helper scripts: build_html_docs.sh, junit_to_html.py
+
+docs/                    written findings and specifications
+  data_audit.md          data-quality investigation (lookup tables, broken sensors, correlation matching)
+  model_results.md       baseline vs Random Forest results, validation, sensitivity check
+  optimisation.md        runtime/memory/accuracy trade-offs, hyperparameter tuning, final model choice
+  inputs_outputs.md      formal inputs/outputs specification for the pipeline and key functions
+  html/                  auto-generated HTML API documentation (see scripts/build_html_docs.sh)
+
+data/
+  raw/                   (empty on GitHub) place source CSVs here to reproduce
+  processed/             (empty on GitHub) cleaned dataset is written here when src/build_dataset.py runs
+
+reports/                 all generated outputs (tables, figures, test results)
+  figures/               6 report/slide-ready PNG charts
+  test_results.xml, test_report.html   automated test results
+  *.csv, *.txt           numeric results backing docs/ and the written report
 ```
 
-## Data
+## Key results
 
-Source files are not committed to this repository (too large for git /
-contain a GUID-identified building's operational data). To reproduce:
-1. Obtain `5EnvSensor_MayToDec2024_180kRows.csv` and
-   `5occupancySensor_MayToDec2024_9MRows.csv` (zipped) from the unit's
-   Dataset 2 drive folder.
-2. Place them under `data/raw/`.
-3. Update the `ENV_PATH` / `OCC_PATH` constants at the top of
-   `src/match_sensors_to_zones.py` if your paths differ.
-
-## Reproducing the data audit
-
-```bash
-pip install -r requirements.txt
-python src/match_sensors_to_zones.py
-```
-
-This regenerates `reports/sensor_zone_correlation_matrix.csv` and
-`reports/sensor_zone_match.csv`, and prints the key findings summarised in
-`docs/data_audit.md`.
-
-## AI use disclosure
-
-This project was developed with assistance from Claude (Anthropic). See
-`docs/ai_use.md` for the detailed disclosure required by the project brief
-(tools used, tasks, level of contribution, verification steps, and decisions
-that remained the student's own).
-
-## Key results (so far)
-
-Single-room occupancy classification (sensor 869 / zone `3e5a14df-...`,
-4,099 samples, chronological 80/20 split):
-
-| Model | F1 | ROC-AUC |
-|---|---|---|
-| Baseline: CO2 threshold rule | 0.345 | 0.568 |
-| Random Forest (env + time features) | 0.763 | 0.736 |
-| Random Forest (env features only) | 0.738 | 0.667 |
-
-See `docs/model_results.md` for full results, cross-validation stability,
-and an honest discussion of what the model is and isn't actually learning.
-
-## Next steps
-
-      gradient boosting) for the "credible alternatives" comparison
-- [ ] Figures: time-series plot of CO2 vs headcount, feature importance chart,
-      confusion matrices
-- [ ] Headcount regression as a secondary framing (data already supports it)
-- [ ] Write up full report (engineering context, limitations, AI use disclosure)
-
-## Optimisation & final design choice
-
-After comparing accuracy, runtime, memory, and hyperparameter-tuning
-behaviour (`docs/optimisation.md`), **Logistic Regression is the recommended
-final model**, not the Random Forest used for interpretation/feature
-analysis above:
+Single-room occupancy classification (sensor `6012002000869` / zone
+`3e5a14df-...`, the one sensor/zone pair the data audit found to be usable —
+see `docs/data_audit.md`), 4,099 samples, chronological 80/20 split:
 
 | Model | F1 | ROC-AUC | Fit time | Predict/row | Model size |
 |---|---|---|---|---|---|
-| Logistic Regression | 0.756 | 0.708 | 11.3 ms | 1.1 µs | 1.8 KB |
-| Random Forest | 0.763 | 0.736 | 716.0 ms | 91.2 µs | 4.2 MB |
+| Baseline: CO2 threshold rule | 0.345 | 0.568 | — | — | — |
+| Random Forest (env + time features) | 0.763 | 0.736 | 716.0 ms | 91.2 µs | 4.2 MB |
+| **Logistic Regression (recommended final model)** | 0.756 | 0.708 | 11.3 ms | 1.1 µs | 1.8 KB |
 
-Random Forest's accuracy edge is within cross-validation noise; Logistic
-Regression's efficiency advantage (60-80x faster, ~2300x smaller) is large
-and consistent, which matters more for a real low-cost sensor deployment.
-Hyperparameter tuning (RandomizedSearchCV) was also tried and made held-out
-performance *worse* — documented as a limitation of the ~5-week training
-window rather than hidden.
+Random Forest edges out Logistic Regression on raw accuracy, but that edge
+is within the noise observed across cross-validation folds, while Logistic
+Regression is ~60-80x cheaper to run and ~2,300x smaller — see
+`docs/optimisation.md` for the full trade-off analysis and why Logistic
+Regression, not the more "impressive" model, is the recommended design.
 
-## Figures
+See `docs/model_results.md` for full validation results (including a check
+for whether the model is just learning the room's schedule rather than
+reading the air — it isn't, mostly).
 
-Report/slide-ready figures (300 dpi PNG) are in `reports/figures/`, generated
-by `src/make_figures.py`:
+## Reproducing the pipeline
 
-1. `01_co2_vs_headcount.png` — one week of CO2 vs headcount, showing the
-   physical relationship the whole project rests on
-2. `02_sensor_zone_correlation.png` — the 5×5 sensor/zone correlation matrix
-   from the data audit (visualises why only 1 pair was usable)
-3. `03_model_comparison_f1.png` — baseline vs all 3 ML models, F1 on test set
-4. `04_feature_importance.png` — Random Forest feature importances
-5. `05_cv_stability.png` — per-fold F1 across 5-fold TimeSeriesSplit CV
-6. `06_accuracy_vs_cost.png` — accuracy vs. inference-time trade-off
+```bash
+pip install -r requirements.txt
+```
+
+1. Obtain `5EnvSensor_MayToDec2024_180kRows.csv` and
+   `5occupancySensor_MayToDec2024_9MRows.csv` (zipped) from the unit's
+   Dataset 2 drive folder and place them under `data/raw/`.
+2. Update the path constants at the top of each `src/` script if your paths
+   differ from the defaults.
+3. Run in order:
+   ```bash
+   python src/match_sensors_to_zones.py   # data audit: infers sensor<->zone pairing
+   python src/build_dataset.py            # builds data/processed/room_dataset.csv
+   python src/train_model.py              # baseline vs Random Forest + validation
+   python src/sensitivity_env_only.py     # time-of-day sensitivity check
+   python src/optimisation.py             # runtime/memory/accuracy comparison + tuning
+   python src/make_figures.py             # generates reports/figures/*.png
+   ```
+
+## Tests
+
+```bash
+pytest tests/ -v --junitxml=reports/test_results.xml
+python scripts/junit_to_html.py   # renders reports/test_report.html
+```
+
+9/9 tests passing. Tests run against small synthetic fixtures
+(`tests/conftest.py`), not the real multi-hundred-MB source files, so the
+suite runs in under 2 seconds with no external data required. Two of the
+tests are regression tests for a real bug found during development (a
+time-grid misalignment between the two resampling functions that silently
+produced all-`NaN` output) — see `docs/inputs_outputs.md` §5 for details.
+
+## Code documentation
+
+HTML API documentation (generated from docstrings via Python's built-in
+`pydoc`) is in `docs/html/` — open `docs/html/index.html`. Regenerate with:
+
+```bash
+bash scripts/build_html_docs.sh
+```
+
+## License
+
+Code is MIT licensed (see `LICENSE`). The source sensor data is **not**
+included in this repository and remains subject to Monash University's own
+data-sharing terms for the MMA3001 unit.
+
+## AI use disclosure
+
+To be completed as part of the written report (brief requirement #7). AI
+assistance (Claude, Anthropic) was used throughout development of this
+repository; the full disclosure — what it was used for, how outputs were
+verified, and which decisions remained the student's own — will be written
+up in `docs/ai_use.md` alongside the final report.
+
+## Remaining work
+
+- [ ] Written report (5-10 pages, pulling together `docs/data_audit.md`,
+      `docs/model_results.md`, `docs/optimisation.md`, `docs/inputs_outputs.md`)
+- [ ] `docs/ai_use.md` — full AI-use disclosure and critical reflection
+- [ ] Presentation slides

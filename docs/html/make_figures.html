@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module make_figures</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">make_figures</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/home/claude/work/mma3001-occupancy-prediction/src/make_figures.py">/home/claude/work/mma3001-occupancy-prediction/src/make_figures.py</a></td></tr></table>
+    <p><span class="code">Generate&nbsp;the&nbsp;figures&nbsp;used&nbsp;in&nbsp;the&nbsp;written&nbsp;report&nbsp;and&nbsp;presentation&nbsp;slides.<br>
+&nbsp;<br>
+Reads&nbsp;from&nbsp;data/processed/room_dataset.csv&nbsp;and&nbsp;the&nbsp;reports/*.csv&nbsp;files<br>
+produced&nbsp;by&nbsp;train_model.py,&nbsp;sensitivity_env_only.py,&nbsp;optimisation.py&nbsp;and<br>
+match_sensors_to_zones.py.&nbsp;Writes&nbsp;PNGs&nbsp;(300&nbsp;dpi,&nbsp;report/slide-ready)&nbsp;to<br>
+reports/figures/.<br>
+&nbsp;<br>
+Palette&nbsp;follows&nbsp;the&nbsp;project's&nbsp;data-viz&nbsp;conventions:&nbsp;blue&nbsp;(#2a78d6)&nbsp;as&nbsp;the<br>
+primary&nbsp;single-series/sequential&nbsp;hue,&nbsp;with&nbsp;orange/aqua/yellow&nbsp;as&nbsp;the&nbsp;fixed<br>
+categorical&nbsp;order&nbsp;for&nbsp;multi-model&nbsp;comparisons,&nbsp;muted&nbsp;ink&nbsp;for&nbsp;axes/gridlines,<br>
+and&nbsp;a&nbsp;consistent&nbsp;light&nbsp;chart&nbsp;surface&nbsp;throughout&nbsp;so&nbsp;every&nbsp;figure&nbsp;matches.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="matplotlib.html">matplotlib</a><br>
+</td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-fig1_co2_vs_headcount"><strong>fig1_co2_vs_headcount</strong></a>()</dt></dl>
+ <dl><dt><a name="-fig2_sensor_zone_correlation_heatmap"><strong>fig2_sensor_zone_correlation_heatmap</strong></a>()</dt></dl>
+ <dl><dt><a name="-fig3_model_comparison_bar"><strong>fig3_model_comparison_bar</strong></a>()</dt></dl>
+ <dl><dt><a name="-fig4_feature_importance"><strong>fig4_feature_importance</strong></a>()</dt></dl>
+ <dl><dt><a name="-fig5_cv_stability"><strong>fig5_cv_stability</strong></a>()</dt></dl>
+ <dl><dt><a name="-fig6_accuracy_vs_cost"><strong>fig6_accuracy_vs_cost</strong></a>()</dt></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>AQUA</strong> = '#1baf7a'<br>
+<strong>BLUE</strong> = '#2a78d6'<br>
+<strong>DATA_PATH</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/data/processed/room_dataset.csv')<br>
+<strong>FIG_DIR</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/reports/figures')<br>
+<strong>GRID</strong> = '#e1e0d9'<br>
+<strong>INK</strong> = '#0b0b0b'<br>
+<strong>INK_MUTED</strong> = '#898781'<br>
+<strong>INK_SECONDARY</strong> = '#52514e'<br>
+<strong>ORANGE</strong> = '#eb6834'<br>
+<strong>RED</strong> = '#e34948'<br>
+<strong>REPORTS_DIR</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/reports')<br>
+<strong>ROOT</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction')<br>
+<strong>SURFACE</strong> = '#fcfcfb'<br>
+<strong>YELLOW</strong> = '#eda100'</td></tr></table>
+</body></html>
