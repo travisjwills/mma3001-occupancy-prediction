@@ -116,12 +116,10 @@ included in this repository and remains subject to Monash University's own
 data-sharing terms for the MMA3001 unit.
 
 ## AI use disclosure
-
-To be completed as part of the written report (brief requirement #7). AI
-assistance (Claude, Anthropic) was used throughout development of this
+AI assistance (Claude, Anthropic) was used throughout development of this
 repository; the full disclosure — what it was used for, how outputs were
-verified, and which decisions remained the student's own — will be written
-up in `docs/ai_use.md` alongside the final report.
+verified, and which decisions were made — will be written
+in `docs/ai_use.md` alongside the final report.
 
 ## Remaining work
 
