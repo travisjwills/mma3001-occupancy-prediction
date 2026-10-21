@@ -1,0 +1,16 @@
+model,fold,mae
+Mean baseline,0,2.7785417375581307
+Mean baseline,1,2.5966096308562063
+Mean baseline,2,2.6287241095284974
+Mean baseline,3,1.8709699841387082
+Mean baseline,4,1.4619579712883772
+Linear Regression,0,2.6970835421660735
+Linear Regression,1,2.223972011686898
+Linear Regression,2,2.5199420833472446
+Linear Regression,3,1.8231970647014726
+Linear Regression,4,0.8932881878292027
+Decision Tree Regression,0,1.56215165666488
+Decision Tree Regression,1,2.3106486877609798
+Decision Tree Regression,2,1.610902590754807
+Decision Tree Regression,3,0.8410307891587269
+Decision Tree Regression,4,0.47685020647294923

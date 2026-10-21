@@ -25,6 +25,7 @@ human-readable summary the brief asks for.
 | `reports/model_comparison.csv`, `cv_results.csv` (F1 per fold for all four models), `feature_importance.csv`, `confusion_matrices.txt` | CSV / text | Model performance metrics, used directly in `docs/model_results.md` |
 | `reports/optimisation_comparison.csv`, `hyperparam_tuning.csv`, `sensitivity_env_only.csv` | CSV | Runtime/memory/accuracy trade-off results, used in `docs/optimisation.md` |
 | `reports/cv_fold_dates.csv`, `daily_occupancy.csv` | CSV | Dates and occupied share of each cross-validation fold, and of each calendar day; used to explain the weak fold in `docs/model_results.md` |
+| `reports/regression_results.csv`, `regression_cv.csv`, `regression_depth_selection.csv`, `regression_test_predictions.csv` | CSV | Headcount regression extension: test metrics (MAE, RMSE in people; R^2), CV MAE per fold, the depth-selection table, and actual vs predicted headcount for the test period |
 | `reports/figures/*.png` | PNG, 300dpi | Report/slide-ready charts |
 | `reports/test_results.xml`, `test_report.html` | JUnit XML / HTML | Automated test results (see §5) |
 
@@ -61,6 +62,14 @@ human-readable summary the brief asks for.
 - **Output:** dict of `accuracy`, `precision`, `recall`, `f1`, `roc_auc`.
 - **Invalid/missing input handling:** if `y_true` contains only one class (can happen in a small CV fold), ROC-AUC is mathematically undefined; the function returns `NaN` for that metric rather than raising, so a single degenerate fold doesn't crash a whole cross-validation run (covered by `tests/test_train_model.py::test_evaluate_handles_single_class_without_crashing`).
 
+### `headcount_regression.regression_metrics(y_true, y_pred) -> dict`
+- **Input:** actual and predicted headcounts (people), equal length.
+- **Output:** dict of `mae` and `rmse` (both in people) and `r2` (dimensionless; 1 is perfect, 0 equals predicting the mean of `y_true`, can be negative).
+
+### `headcount_regression.select_tree_depth(X, y, depths, n_splits) -> (best_depth, table)`
+- **Input:** training inputs and headcounts in time order; candidate maximum depths (`None` = no limit); number of time-series folds.
+- **Output:** the depth with the lowest mean cross-validation MAE (ties go to the shallower candidate) and a table of mean and standard deviation of CV MAE for every candidate. Uses training data only, so the test period never influences the choice.
+
 ## 4. Data cleaning / row-dropping policy
 
 `build_dataset.py` drops any row with a missing value in any of the 10
@@ -84,7 +93,7 @@ pytest tests/ -v --junitxml=reports/test_results.xml
 python scripts/junit_to_html.py   # renders reports/test_report.html
 ```
 
-Current status: 9/9 tests passing. Notably, two tests
+Current status: 11/11 tests passing. Notably, two tests
 (`test_resample_grid_is_bin_aligned_regardless_of_start_time` in both
 `test_load_env.py` and `test_load_occupancy.py`) are regression tests for a
 real bug found during development — an earlier version of the resampling

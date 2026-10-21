@@ -38,7 +38,7 @@ data/
   processed/             (empty on GitHub) cleaned dataset is written here when src/build_dataset.py runs
 
 reports/                 all generated outputs (tables, figures, test results)
-  figures/               6 report/slide-ready PNG charts
+  figures/               7 report/slide-ready PNG charts
   test_results.xml, test_report.html   automated test results
   *.csv, *.txt           numeric results backing docs/ and the written report
 ```
@@ -71,6 +71,24 @@ cross-validation fold is weak for every model and a check for whether the
 model is just learning the room's schedule rather than reading the air (it
 isn't, mostly).
 
+### Extension: how many people? (headcount regression)
+
+The same data, split and folds are also used to predict the number of people
+in the room (0 to 22) with Decision Tree Regression, its depth chosen by
+time-series cross-validation on the training data (`src/headcount_regression.py`).
+
+| Model | Test MAE (people) | Test RMSE (people) | Test predictions within 1 person | Mean CV MAE (people) |
+|---|---|---|---|---|
+| Mean baseline (always predict the training average) | 1.23 | 1.36 | 49% | 2.27 |
+| Linear Regression | 0.83 | 1.08 | 70% | 2.03 |
+| **Decision Tree Regression (depth 6)** | 0.80 | 1.52 | 85% | 1.36 |
+
+The tree has the lowest typical error in cross-validation and on the test
+period, but it sometimes predicts a crowd that did not arrive, so its RMSE is
+the worst. The test period was unusually quiet (mean 0.7 people, against 1.8
+in training), so test R^2 is negative for every model and is not a useful
+summary here; see `docs/model_results.md`.
+
 ## Reproducing the pipeline
 
 ```bash
@@ -89,6 +107,7 @@ pip install -r requirements.txt
    python src/train_model.py              # baseline vs Random Forest + validation
    python src/sensitivity_env_only.py     # time-of-day sensitivity check
    python src/cv_fold_diagnostics.py      # dates/occupancy of each CV fold (explains the weak fold)
+   python src/headcount_regression.py     # extension: predict headcount with Decision Tree Regression
    python src/optimisation.py             # runtime/memory/accuracy comparison + tuning
    python src/make_figures.py             # generates reports/figures/*.png
    ```
@@ -100,7 +119,7 @@ pytest tests/ -v --junitxml=reports/test_results.xml
 python scripts/junit_to_html.py   # renders reports/test_report.html
 ```
 
-9/9 tests passing. Tests run against small synthetic fixtures
+11/11 tests passing. Tests run against small synthetic fixtures
 (`tests/conftest.py`), not the real multi-hundred-MB source files, so the
 suite runs in under 2 seconds with no external data required. Two of the
 tests are regression tests for a real bug found during development (a

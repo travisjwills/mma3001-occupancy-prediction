@@ -2,8 +2,8 @@
 Generate the figures used in the written report and presentation slides.
 
 Reads from data/processed/room_dataset.csv and the reports/*.csv files
-produced by train_model.py, sensitivity_env_only.py, optimisation.py and
-match_sensors_to_zones.py. Writes PNGs (300 dpi, report/slide-ready) to
+produced by train_model.py, sensitivity_env_only.py, optimisation.py,
+headcount_regression.py and match_sensors_to_zones.py. Writes PNGs (300 dpi, report/slide-ready) to
 reports/figures/.
 
 Palette follows the project's data-viz conventions: blue (#2a78d6) as the
@@ -17,6 +17,7 @@ from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -229,6 +230,34 @@ def fig6_accuracy_vs_cost():
     plt.close(fig)
 
 
+def fig7_headcount_regression():
+    """Actual vs Decision Tree predicted headcount across the test period.
+
+    Step lines, because headcount is held constant within each 15-minute
+    interval. Linear Regression is left out so the two lines that matter stay
+    readable; its numbers are in reports/regression_results.csv.
+    """
+    pred = pd.read_csv(REPORTS_DIR / "regression_test_predictions.csv", parse_dates=["timestamp"])
+    t = pred["timestamp"].dt.tz_convert("Australia/Melbourne")
+    fig, ax = plt.subplots(figsize=(9, 3.8))
+    ax.step(t, pred["actual"], where="post", color=INK_SECONDARY, linewidth=1.2, label="Actual headcount")
+    ax.step(t, pred["decision_tree"], where="post", color=ORANGE, linewidth=1.4,
+            label="Decision Tree Regression prediction")
+    ax.set_ylabel("People in room")
+    ax.set_ylim(0, max(pred["actual"].max(), pred["decision_tree"].max()) + 2.5)  # room for legend
+    ax.grid(axis="y", linewidth=0.6)
+    ax.legend(frameon=False, loc="upper left", ncol=2, fontsize=9)
+    ax.xaxis.set_major_locator(mdates.DayLocator(tz=t.dt.tz))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%a %d %b", tz=t.dt.tz))
+    ax.tick_params(axis="x", labelsize=9)
+    ax.set_title("Test period (Melbourne time): typical error is under one person,\n"
+                 "but the tree sometimes predicts a crowd that did not arrive",
+                 fontsize=11, loc="left")
+    fig.tight_layout()
+    fig.savefig(FIG_DIR / "07_headcount_regression.png", dpi=300)
+    plt.close(fig)
+
+
 def main():
     fig1_co2_vs_headcount()
     fig2_sensor_zone_correlation_heatmap()
@@ -236,6 +265,7 @@ def main():
     fig4_feature_importance()
     fig5_cv_stability()
     fig6_accuracy_vs_cost()
+    fig7_headcount_regression()
     print("Saved figures to", FIG_DIR)
     for f in sorted(FIG_DIR.glob("*.png")):
         print(" -", f.name)

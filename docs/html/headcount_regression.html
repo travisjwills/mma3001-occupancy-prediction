@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module headcount_regression</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">headcount_regression</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="../../src/headcount_regression.py">src/headcount_regression.py</a></td></tr></table>
+    <p><span class="code">Predict&nbsp;HOW&nbsp;MANY&nbsp;people&nbsp;are&nbsp;in&nbsp;the&nbsp;room&nbsp;(headcount),&nbsp;not&nbsp;just&nbsp;whether&nbsp;it&nbsp;is<br>
+occupied,&nbsp;using&nbsp;Decision&nbsp;Tree&nbsp;Regression.<br>
+&nbsp;<br>
+The&nbsp;classification&nbsp;models&nbsp;in&nbsp;``train_model.py``&nbsp;and&nbsp;``optimisation.py``&nbsp;answer<br>
+a&nbsp;yes/no&nbsp;question.&nbsp;This&nbsp;script&nbsp;extends&nbsp;the&nbsp;project&nbsp;to&nbsp;a&nbsp;regression&nbsp;problem&nbsp;on<br>
+the&nbsp;same&nbsp;data,&nbsp;split&nbsp;and&nbsp;folds,&nbsp;so&nbsp;that&nbsp;the&nbsp;number&nbsp;of&nbsp;occupants&nbsp;can&nbsp;be<br>
+estimated&nbsp;from&nbsp;the&nbsp;same&nbsp;environmental&nbsp;readings&nbsp;and&nbsp;time&nbsp;features.<br>
+&nbsp;<br>
+Models&nbsp;compared&nbsp;(all&nbsp;fitted&nbsp;on&nbsp;the&nbsp;training&nbsp;portion&nbsp;only):<br>
+&nbsp;&nbsp;1.&nbsp;Mean&nbsp;baseline:&nbsp;always&nbsp;predict&nbsp;the&nbsp;average&nbsp;training&nbsp;headcount.&nbsp;Any&nbsp;useful<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model&nbsp;must&nbsp;beat&nbsp;this.<br>
+&nbsp;&nbsp;2.&nbsp;Linear&nbsp;Regression:&nbsp;the&nbsp;simplest&nbsp;regression&nbsp;model,&nbsp;a&nbsp;weighted&nbsp;sum&nbsp;of&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;inputs,&nbsp;as&nbsp;a&nbsp;reference&nbsp;point.<br>
+&nbsp;&nbsp;3.&nbsp;Decision&nbsp;Tree&nbsp;Regression:&nbsp;splits&nbsp;the&nbsp;inputs&nbsp;into&nbsp;regions&nbsp;with&nbsp;a&nbsp;series&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;yes/no&nbsp;questions&nbsp;(e.g.&nbsp;"is&nbsp;CO2&nbsp;above&nbsp;520&nbsp;ppm?")&nbsp;and&nbsp;predicts&nbsp;the&nbsp;mean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;headcount&nbsp;of&nbsp;the&nbsp;training&nbsp;intervals&nbsp;in&nbsp;each&nbsp;region.&nbsp;Its&nbsp;maximum&nbsp;depth&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chosen&nbsp;by&nbsp;5-fold&nbsp;time-series&nbsp;cross-validation&nbsp;on&nbsp;the&nbsp;training&nbsp;data&nbsp;(lowest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mean&nbsp;absolute&nbsp;error),&nbsp;never&nbsp;by&nbsp;looking&nbsp;at&nbsp;the&nbsp;test&nbsp;period.<br>
+&nbsp;<br>
+Validation:&nbsp;the&nbsp;same&nbsp;chronological&nbsp;80/20&nbsp;split&nbsp;and&nbsp;the&nbsp;same&nbsp;5&nbsp;TimeSeriesSplit<br>
+folds&nbsp;as&nbsp;the&nbsp;classification&nbsp;models.&nbsp;Metrics:&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;(MAE,&nbsp;in<br>
+people),&nbsp;root&nbsp;mean&nbsp;squared&nbsp;error&nbsp;(RMSE,&nbsp;in&nbsp;people)&nbsp;and&nbsp;R^2.<br>
+&nbsp;<br>
+Outputs:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reports/regression_depth_selection.csv&nbsp;&nbsp;&nbsp;CV&nbsp;MAE&nbsp;for&nbsp;each&nbsp;candidate&nbsp;depth<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reports/regression_results.csv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test-period&nbsp;metrics&nbsp;per&nbsp;model<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reports/regression_cv.csv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CV&nbsp;MAE&nbsp;per&nbsp;fold&nbsp;per&nbsp;model<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reports/regression_test_predictions.csv&nbsp;&nbsp;actual&nbsp;vs&nbsp;predicted&nbsp;headcount</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-cv_mae"><strong>cv_mae</strong></a>(
+    make_model: 'Callable[[], object]',
+    X: 'pd.DataFrame',
+    y: 'np.ndarray',
+    n_splits: 'int' = 5
+) -&gt; 'list[float]'</dt><dd><span class="code">Mean&nbsp;absolute&nbsp;error&nbsp;on&nbsp;each&nbsp;time-ordered&nbsp;cross-validation&nbsp;fold.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;make_model:&nbsp;Function&nbsp;returning&nbsp;a&nbsp;fresh,&nbsp;unfitted&nbsp;scikit-learn&nbsp;regressor.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;Training&nbsp;inputs,&nbsp;in&nbsp;time&nbsp;order.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;Training&nbsp;headcounts,&nbsp;in&nbsp;time&nbsp;order.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_splits:&nbsp;Number&nbsp;of&nbsp;TimeSeriesSplit&nbsp;folds.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;One&nbsp;MAE&nbsp;per&nbsp;fold.&nbsp;Each&nbsp;fold&nbsp;trains&nbsp;on&nbsp;all&nbsp;earlier&nbsp;data&nbsp;and&nbsp;validates&nbsp;on<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;next&nbsp;block,&nbsp;so&nbsp;no&nbsp;fold&nbsp;ever&nbsp;sees&nbsp;the&nbsp;future.</span></dd></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
+ <dl><dt><a name="-regression_metrics"><strong>regression_metrics</strong></a>(y_true: 'Sequence[float]', y_pred: 'Sequence[float]') -&gt; 'dict'</dt><dd><span class="code">Score&nbsp;a&nbsp;set&nbsp;of&nbsp;headcount&nbsp;predictions.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;Actual&nbsp;headcounts.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;Predicted&nbsp;headcounts,&nbsp;same&nbsp;length&nbsp;as&nbsp;``y_true``.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Dict&nbsp;with&nbsp;``mae``&nbsp;(mean&nbsp;absolute&nbsp;error,&nbsp;people),&nbsp;``rmse``&nbsp;(root&nbsp;mean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;squared&nbsp;error,&nbsp;people;&nbsp;penalises&nbsp;large&nbsp;misses&nbsp;more&nbsp;than&nbsp;MAE)&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;``r2``&nbsp;(fraction&nbsp;of&nbsp;the&nbsp;variance&nbsp;in&nbsp;``y_true``&nbsp;explained;&nbsp;1&nbsp;is&nbsp;perfect,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;is&nbsp;no&nbsp;better&nbsp;than&nbsp;predicting&nbsp;the&nbsp;mean&nbsp;of&nbsp;``y_true``,&nbsp;and&nbsp;it&nbsp;can&nbsp;be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;negative).</span></dd></dl>
+ <dl><dt><a name="-select_tree_depth"><strong>select_tree_depth</strong></a>(
+    X: 'pd.DataFrame',
+    y: 'np.ndarray',
+    depths: 'Sequence[int | None]' = [2, 3, 4, 5, 6, 8, 10, None],
+    n_splits: 'int' = 5
+) -&gt; 'tuple[int | None, pd.DataFrame]'</dt><dd><span class="code">Choose&nbsp;the&nbsp;Decision&nbsp;Tree's&nbsp;maximum&nbsp;depth&nbsp;by&nbsp;time-series&nbsp;cross-validation.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;Training&nbsp;inputs,&nbsp;in&nbsp;time&nbsp;order.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;Training&nbsp;headcounts,&nbsp;in&nbsp;time&nbsp;order.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;depths:&nbsp;Candidate&nbsp;maximum&nbsp;depths;&nbsp;``None``&nbsp;means&nbsp;grow&nbsp;until&nbsp;the&nbsp;leaf<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;limit&nbsp;stops&nbsp;it.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_splits:&nbsp;Number&nbsp;of&nbsp;TimeSeriesSplit&nbsp;folds.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;``(best_depth,&nbsp;table)``&nbsp;where&nbsp;``best_depth``&nbsp;has&nbsp;the&nbsp;lowest&nbsp;mean&nbsp;CV&nbsp;MAE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(ties&nbsp;go&nbsp;to&nbsp;the&nbsp;earlier,&nbsp;shallower&nbsp;candidate)&nbsp;and&nbsp;``table``&nbsp;has&nbsp;one&nbsp;row<br>
+&nbsp;&nbsp;&nbsp;&nbsp;per&nbsp;candidate&nbsp;with&nbsp;columns&nbsp;``max_depth``,&nbsp;``mean_cv_mae``&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;``std_cv_mae``.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>CANDIDATE_DEPTHS</strong> = [2, 3, 4, 5, 6, 8, 10, None]<br>
+<strong>Callable</strong> = typing.Callable<br>
+<strong>DATA_PATH</strong> = PosixPath('data/processed/room_dataset.csv')<br>
+<strong>FEATURES</strong> = ['Carbon dioxide', 'Temperature', 'Humidity', 'Formaldehyde', 'Light Volatile Organic Compounds', 'Pressure', 'Particulate matter 1', 'Particulate matter 2.5', 'Particulate matter 4', 'Particulate matter 10', 'hour', 'dayofweek', 'is_weekend']<br>
+<strong>MIN_SAMPLES_LEAF</strong> = 10<br>
+<strong>N_SPLITS</strong> = 5<br>
+<strong>RANDOM_STATE</strong> = 42<br>
+<strong>REPORTS_DIR</strong> = PosixPath('reports')<br>
+<strong>Sequence</strong> = typing.Sequence<br>
+<strong>TARGET</strong> = 'headcount'<br>
+<strong>TRAIN_FRACTION</strong> = 0.8<br>
+<strong>__annotations__</strong> = {'CANDIDATE_DEPTHS': 'list[int | None]'}</td></tr></table>
+</body></html>

@@ -99,7 +99,38 @@ borderline cases (useful for setting a probability threshold in practice),
 but the core result holds: **environmental sensing alone is doing most of
 the work**, which supports the project's original premise.
 
-## What this validation does and does not establish
+## Extension: predicting headcount (Decision Tree Regression)
+
+`src/headcount_regression.py` predicts the number of people (0 to 22) rather
+than occupied/not occupied, on the same chronological split and the same five
+time-ordered folds. The tree's maximum depth was chosen by cross-validation on
+the training data only (lowest mean CV MAE among depths 2, 3, 4, 5, 6, 8, 10
+and unlimited, at least 10 intervals per leaf): depth 6, with mean CV MAE
+1.36. Depths 3 to unlimited all scored between 1.36 and 1.41, so the choice
+among them is within the fold noise (std about 0.6).
+
+| Model | Test MAE | Test RMSE | Test R^2 | Within 1 person | Mean CV MAE (std) |
+|---|---|---|---|---|---|
+| Mean baseline | 1.231 | 1.364 | -1.418 | 48.5% | 2.267 (0.511) |
+| Linear Regression | 0.828 | 1.076 | -0.505 | 69.9% | 2.031 (0.641) |
+| Decision Tree Regression (depth 6) | 0.805 | 1.516 | -1.987 | 85.1% | 1.360 (0.641) |
+
+**Interpretation:**
+- Across the five training folds the tree is clearly best: its mean absolute
+  error is 1.36 people, against 2.27 for the mean baseline and 2.03 for Linear
+  Regression.
+- On the test period it again has the lowest MAE and the most predictions
+  within one person (85%), but it sometimes predicts five or six people when
+  the room is nearly empty, which inflates RMSE (figure 7).
+- The test period was unusually quiet: mean 0.72 people and a maximum of 8,
+  against a training mean of 1.77 and maximum of 22, with only 0.2% of test
+  intervals at 5 or more people (14.9% in training). With so little variation,
+  R^2 is negative for every model, including the mean baseline, so MAE is the
+  more meaningful test measure here.
+- Counting people is clearly harder than detecting presence: the same inputs
+  give a useful yes/no classifier but only a rough headcount estimate.
+
+
 
 - **Does establish:** on this one room, over this ~6-week window, a
   multivariate environmental model beats a single-variable CO2 threshold by
