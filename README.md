@@ -47,23 +47,29 @@ reports/                 all generated outputs (tables, figures, test results)
 
 Single-room occupancy classification (sensor `6012002000869` / zone
 `3e5a14df-...`, the one sensor/zone pair the data audit found to be usable —
-see `docs/data_audit.md`), 4,099 samples, chronological 80/20 split:
+see `docs/data_audit.md`), 4,099 samples, chronological 80/20 split. "CV" is
+5-fold time-series cross-validation on the training portion.
 
-| Model | F1 | ROC-AUC | Fit time | Predict/row | Model size |
-|---|---|---|---|---|---|
-| Baseline: CO2 threshold rule | 0.345 | 0.568 | — | — | — |
-| Random Forest (env + time features) | 0.763 | 0.736 | 716.0 ms | 91.2 µs | 4.2 MB |
-| **Logistic Regression (recommended final model)** | 0.756 | 0.708 | 11.3 ms | 1.1 µs | 1.8 KB |
+| Model | Test F1 | Test ROC-AUC | Mean CV F1 | Fit time | Predict/row | Model size |
+|---|---|---|---|---|---|---|
+| Baseline: CO2 threshold rule | 0.345 | 0.568 | 0.519 | — | — | — |
+| Logistic Regression | 0.756 | 0.708 | 0.536 | 11.3 ms | 1.1 µs | 1.8 KB |
+| Random Forest | 0.763 | 0.736 | 0.698 | 716.0 ms | 91.2 µs | 4.2 MB |
+| **Gradient Boosting (recommended final model)** | 0.761 | 0.724 | 0.702 | 432.3 ms | 1.5 µs | 135.8 KB |
 
-Random Forest edges out Logistic Regression on raw accuracy, but that edge
-is within the noise observed across cross-validation folds, while Logistic
-Regression is ~60-80x cheaper to run and ~2,300x smaller — see
-`docs/optimisation.md` for the full trade-off analysis and why Logistic
-Regression, not the more "impressive" model, is the recommended design.
+All three machine-learning models are within 1 point of F1 on the held-out
+test period, so that split alone cannot separate them. Cross-validation can:
+Logistic Regression is much less stable over time (mean CV F1 0.536 vs about
+0.70 for the tree models). Gradient Boosting matches the Random Forest on
+accuracy but predicts ~59x faster and is ~31x smaller, so it is the
+recommended design — see `docs/optimisation.md` for the full trade-off analysis
+(including an earlier Logistic Regression recommendation that the
+cross-validation check overturned).
 
-See `docs/model_results.md` for full validation results (including a check
-for whether the model is just learning the room's schedule rather than
-reading the air — it isn't, mostly).
+See `docs/model_results.md` for full validation results, including why one
+cross-validation fold is weak for every model and a check for whether the
+model is just learning the room's schedule rather than reading the air (it
+isn't, mostly).
 
 ## Reproducing the pipeline
 
@@ -82,6 +88,7 @@ pip install -r requirements.txt
    python src/build_dataset.py            # builds data/processed/room_dataset.csv
    python src/train_model.py              # baseline vs Random Forest + validation
    python src/sensitivity_env_only.py     # time-of-day sensitivity check
+   python src/cv_fold_diagnostics.py      # dates/occupancy of each CV fold (explains the weak fold)
    python src/optimisation.py             # runtime/memory/accuracy comparison + tuning
    python src/make_figures.py             # generates reports/figures/*.png
    ```

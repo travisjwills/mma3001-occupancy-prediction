@@ -33,7 +33,10 @@ Validation&nbsp;(brief&nbsp;requirement&nbsp;#5):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;past&nbsp;data,&nbsp;predict&nbsp;on&nbsp;future&nbsp;data.<br>
 &nbsp;&nbsp;-&nbsp;TimeSeriesSplit&nbsp;cross-validation&nbsp;(5&nbsp;folds)&nbsp;on&nbsp;the&nbsp;training&nbsp;portion&nbsp;only,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;check&nbsp;how&nbsp;stable&nbsp;each&nbsp;model's&nbsp;performance&nbsp;is&nbsp;over&nbsp;time,&nbsp;not&nbsp;just&nbsp;a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;single&nbsp;lucky&nbsp;split.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;single&nbsp;lucky&nbsp;split.&nbsp;All&nbsp;four&nbsp;models&nbsp;are&nbsp;cross-validated&nbsp;(baseline,&nbsp;Random<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Forest,&nbsp;Logistic&nbsp;Regression,&nbsp;Gradient&nbsp;Boosting):&nbsp;Logistic&nbsp;Regression&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Gradient&nbsp;Boosting&nbsp;were&nbsp;added&nbsp;after&nbsp;a&nbsp;single&nbsp;test&nbsp;split&nbsp;alone&nbsp;proved&nbsp;too<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weak&nbsp;a&nbsp;basis&nbsp;for&nbsp;choosing&nbsp;between&nbsp;them.<br>
 &nbsp;&nbsp;-&nbsp;Metrics:&nbsp;accuracy,&nbsp;precision,&nbsp;recall,&nbsp;F1,&nbsp;ROC-AUC,&nbsp;confusion&nbsp;matrix.<br>
 &nbsp;<br>
 Outputs:&nbsp;reports/model_comparison.csv,&nbsp;reports/confusion_matrices.txt,<br>

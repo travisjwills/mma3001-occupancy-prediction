@@ -1,7 +1,7 @@
 # Data Audit Log
 
 This document records the data-quality investigation carried out before any
-modelling, as required by the project brief ("missing, irregular or
+modelling, as listed in the Dataset 2 project information ("missing, irregular or
 potentially unreliable observations that require auditing"). Each entry is a
 finding, its evidence, and its consequence for project scope.
 
@@ -43,7 +43,7 @@ While building the resampling pipeline (`src/load_env.py`), CO2 readings for
 3 of the 5 sensors collapsed to only 1–2 distinct 15-minute time bins despite
 having tens of thousands of rows each:
 
-| sensorid | rows (all variables) | distinct real timestamps (CO2) |
+| sensorid | rows (all variables) | distinct 15-minute intervals with a CO2 reading |
 |---|---|---|
 | 6012002000227 | 234,993 | 1 |
 | 6012002000241 | 618,422 | **2** |

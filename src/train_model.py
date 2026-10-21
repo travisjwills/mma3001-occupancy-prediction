@@ -23,7 +23,10 @@ Validation (brief requirement #5):
     past data, predict on future data.
   - TimeSeriesSplit cross-validation (5 folds) on the training portion only,
     to check how stable each model's performance is over time, not just a
-    single lucky split.
+    single lucky split. All four models are cross-validated (baseline, Random
+    Forest, Logistic Regression, Gradient Boosting): Logistic Regression and
+    Gradient Boosting were added after a single test split alone proved too
+    weak a basis for choosing between them.
   - Metrics: accuracy, precision, recall, F1, ROC-AUC, confusion matrix.
 
 Outputs: reports/model_comparison.csv, reports/confusion_matrices.txt,
@@ -35,7 +38,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
@@ -138,7 +144,7 @@ def main():
     # --- TimeSeriesSplit CV on training data (stability check) ---
     print("\nTimeSeriesSplit CV (5 folds) on training data:")
     tscv = TimeSeriesSplit(n_splits=5)
-    cv_f1_baseline, cv_f1_rf = [], []
+    cv_f1_baseline, cv_f1_rf, cv_f1_lr, cv_f1_gb = [], [], [], []
     for fold, (tr_idx, val_idx) in enumerate(tscv.split(X_train)):
         X_tr, X_val = X_train.iloc[tr_idx], X_train.iloc[val_idx]
         y_tr, y_val = y_train[tr_idx], y_train[val_idx]
@@ -156,10 +162,27 @@ def main():
         f1_rf = f1_score(y_val, pred_rf, zero_division=0)
         cv_f1_rf.append(f1_rf)
 
-        print(f"  fold {fold}: baseline F1={f1_b:.3f}  RF F1={f1_rf:.3f}  (val n={len(val_idx)})")
+        # Same settings as src/optimisation.py, so the folds and the held-out
+        # test comparison describe the same models.
+        lr_cv = make_pipeline(
+            StandardScaler(), LogisticRegression(max_iter=1000, random_state=42)
+        )
+        lr_cv.fit(X_tr, y_tr)
+        f1_lr = f1_score(y_val, lr_cv.predict(X_val), zero_division=0)
+        cv_f1_lr.append(f1_lr)
+
+        gb_cv = GradientBoostingClassifier(random_state=42)
+        gb_cv.fit(X_tr, y_tr)
+        f1_gb = f1_score(y_val, gb_cv.predict(X_val), zero_division=0)
+        cv_f1_gb.append(f1_gb)
+
+        print(f"  fold {fold}: baseline F1={f1_b:.3f}  RF F1={f1_rf:.3f}  "
+              f"LogReg F1={f1_lr:.3f}  GB F1={f1_gb:.3f}  (val n={len(val_idx)})")
 
     print(f"CV mean F1 -- baseline: {np.mean(cv_f1_baseline):.3f} +/- {np.std(cv_f1_baseline):.3f}")
     print(f"CV mean F1 -- RF:       {np.mean(cv_f1_rf):.3f} +/- {np.std(cv_f1_rf):.3f}")
+    print(f"CV mean F1 -- LogReg:   {np.mean(cv_f1_lr):.3f} +/- {np.std(cv_f1_lr):.3f}")
+    print(f"CV mean F1 -- GB:       {np.mean(cv_f1_gb):.3f} +/- {np.std(cv_f1_gb):.3f}")
 
     # --- Save outputs ---
     REPORTS_DIR.mkdir(exist_ok=True)
@@ -177,7 +200,13 @@ def main():
     print("\nRandom Forest feature importances:")
     print(importance.round(3))
 
-    cv_df = pd.DataFrame({"fold": range(5), "baseline_f1": cv_f1_baseline, "rf_f1": cv_f1_rf})
+    cv_df = pd.DataFrame({
+        "fold": range(5),
+        "baseline_f1": cv_f1_baseline,
+        "rf_f1": cv_f1_rf,
+        "logreg_f1": cv_f1_lr,
+        "gb_f1": cv_f1_gb,
+    })
     cv_df.to_csv(REPORTS_DIR / "cv_results.csv", index=False)
 
 

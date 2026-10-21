@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module cv_fold_diagnostics</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">cv_fold_diagnostics</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/home/claude/work/mma3001-occupancy-prediction/src/cv_fold_diagnostics.py">/home/claude/work/mma3001-occupancy-prediction/src/cv_fold_diagnostics.py</a></td></tr></table>
+    <p><span class="code">Diagnose&nbsp;why&nbsp;cross-validation&nbsp;performance&nbsp;varies&nbsp;so&nbsp;much&nbsp;between&nbsp;folds.<br>
+&nbsp;<br>
+``train_model.py``&nbsp;reports&nbsp;one&nbsp;F1&nbsp;score&nbsp;per&nbsp;TimeSeriesSplit&nbsp;fold,&nbsp;and&nbsp;one&nbsp;fold<br>
+(fold&nbsp;3)&nbsp;is&nbsp;much&nbsp;worse&nbsp;than&nbsp;the&nbsp;others&nbsp;for&nbsp;both&nbsp;the&nbsp;baseline&nbsp;and&nbsp;the&nbsp;Random<br>
+Forest.&nbsp;This&nbsp;script&nbsp;reproduces&nbsp;the&nbsp;same&nbsp;chronological&nbsp;train/test&nbsp;split&nbsp;and&nbsp;the<br>
+same&nbsp;five&nbsp;folds,&nbsp;then&nbsp;reports,&nbsp;for&nbsp;each&nbsp;fold,&nbsp;the&nbsp;calendar&nbsp;dates&nbsp;it&nbsp;covers<br>
+(Melbourne&nbsp;time)&nbsp;and&nbsp;the&nbsp;share&nbsp;of&nbsp;intervals&nbsp;in&nbsp;which&nbsp;the&nbsp;room&nbsp;was&nbsp;occupied.&nbsp;It<br>
+also&nbsp;writes&nbsp;the&nbsp;occupied&nbsp;share&nbsp;for&nbsp;every&nbsp;calendar&nbsp;day,&nbsp;so&nbsp;an&nbsp;unusual&nbsp;week&nbsp;can<br>
+be&nbsp;spotted&nbsp;directly.<br>
+&nbsp;<br>
+Outputs:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reports/cv_fold_dates.csv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one&nbsp;row&nbsp;per&nbsp;fold:&nbsp;dates,&nbsp;size,&nbsp;occupied&nbsp;share<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reports/daily_occupancy.csv&nbsp;&nbsp;&nbsp;one&nbsp;row&nbsp;per&nbsp;Melbourne&nbsp;calendar&nbsp;day</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="pandas.html">pandas</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-daily_occupancy"><strong>daily_occupancy</strong></a>(df: 'pd.DataFrame') -&gt; 'pd.DataFrame'</dt><dd><span class="code">Occupied&nbsp;share&nbsp;and&nbsp;interval&nbsp;count&nbsp;per&nbsp;Melbourne&nbsp;calendar&nbsp;day.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;Dataset&nbsp;with&nbsp;``timestamp``&nbsp;(tz-aware)&nbsp;and&nbsp;``occupied``&nbsp;(0/1).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DataFrame&nbsp;indexed&nbsp;by&nbsp;local&nbsp;date&nbsp;with&nbsp;columns&nbsp;``occupied_share``&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;``n_intervals``.</span></dd></dl>
+ <dl><dt><a name="-fold_summary"><strong>fold_summary</strong></a>(train: 'pd.DataFrame', n_splits: 'int' = 5) -&gt; 'pd.DataFrame'</dt><dd><span class="code">Summarise&nbsp;the&nbsp;validation&nbsp;block&nbsp;of&nbsp;each&nbsp;TimeSeriesSplit&nbsp;fold.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;train:&nbsp;Training&nbsp;portion&nbsp;of&nbsp;the&nbsp;dataset,&nbsp;sorted&nbsp;by&nbsp;``timestamp``,&nbsp;with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;columns&nbsp;``timestamp``&nbsp;(tz-aware)&nbsp;and&nbsp;``occupied``&nbsp;(0/1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_splits:&nbsp;Number&nbsp;of&nbsp;TimeSeriesSplit&nbsp;folds.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DataFrame&nbsp;with&nbsp;one&nbsp;row&nbsp;per&nbsp;fold&nbsp;and&nbsp;columns&nbsp;``fold``,&nbsp;``n_train``,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;``n_validation``,&nbsp;``validation_start``,&nbsp;``validation_end``&nbsp;(Melbourne<br>
+&nbsp;&nbsp;&nbsp;&nbsp;local&nbsp;time)&nbsp;and&nbsp;``occupied_share``&nbsp;(fraction&nbsp;of&nbsp;validation&nbsp;intervals<br>
+&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;the&nbsp;room&nbsp;occupied).</span></dd></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>DATA_PATH</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/data/processed/room_dataset.csv')<br>
+<strong>LOCAL_TZ</strong> = 'Australia/Melbourne'<br>
+<strong>N_SPLITS</strong> = 5<br>
+<strong>REPORTS_DIR</strong> = PosixPath('/home/claude/work/mma3001-occupancy-prediction/reports')<br>
+<strong>TRAIN_FRACTION</strong> = 0.8</td></tr></table>
+</body></html>

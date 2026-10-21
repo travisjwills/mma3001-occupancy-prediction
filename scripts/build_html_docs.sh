@@ -9,7 +9,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 mkdir -p docs/html
 
-MODULES="load_occupancy load_env match_sensors_to_zones build_dataset train_model sensitivity_env_only optimisation make_figures"
+MODULES="load_occupancy load_env match_sensors_to_zones build_dataset train_model sensitivity_env_only cv_fold_diagnostics optimisation make_figures"
 
 (
   cd src

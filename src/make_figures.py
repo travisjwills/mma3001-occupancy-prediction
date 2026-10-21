@@ -156,17 +156,24 @@ def fig4_feature_importance():
 
 def fig5_cv_stability():
     cv = pd.read_csv(REPORTS_DIR / "cv_results.csv")
-    fig, ax = plt.subplots(figsize=(7, 4))
-    width = 0.35
+    fig, ax = plt.subplots(figsize=(8, 4.2))
+    width = 0.2
     x = cv["fold"].to_numpy()
-    ax.bar(x - width / 2, cv["baseline_f1"], width, label="Baseline (CO2 threshold)", color=RED)
-    ax.bar(x + width / 2, cv["rf_f1"], width, label="Random Forest", color=AQUA)
+    series = [
+        ("baseline_f1", "Baseline (CO2 threshold)", RED),
+        ("logreg_f1", "Logistic Regression", BLUE),
+        ("gb_f1", "Gradient Boosting", YELLOW),
+        ("rf_f1", "Random Forest", AQUA),
+    ]
+    for i, (col, label, color) in enumerate(series):
+        offset = (i - (len(series) - 1) / 2) * width
+        ax.bar(x + offset, cv[col], width, label=label, color=color)
     ax.set_xticks(x)
     ax.set_xticklabels([f"Fold {i}" for i in x])
     ax.set_ylabel("F1 score")
     ax.set_ylim(0, 1)
     ax.grid(axis="y", linewidth=0.6)
-    ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=4, fontsize=9)
     ax.set_title("5-fold TimeSeriesSplit CV: performance is unstable across folds", fontsize=11, loc="left")
     fig.tight_layout()
     fig.savefig(FIG_DIR / "05_cv_stability.png", dpi=300)
@@ -174,21 +181,50 @@ def fig5_cv_stability():
 
 
 def fig6_accuracy_vs_cost():
+    """Five-panel dot plot: test F1 is similar across the three models, but
+    stability across time and cost are not.
+
+    Dots (not bars) are used on the log-scale panels because a bar's length is
+    not meaningful on a log axis. Panels share the model order and colours of
+    figure 3. The cross-validation panel is the mean F1 over the five
+    time-ordered folds from ``cv_results.csv``.
+    """
     opt = pd.read_csv(REPORTS_DIR / "optimisation_comparison.csv")
-    fig, ax = plt.subplots(figsize=(7, 4.5))
-    colors = [BLUE, AQUA, YELLOW]
-    for (_, r), c in zip(opt.iterrows(), colors):
-        ax.scatter(r["predict_time_ms_per_row"] * 1000, r["f1"], s=180, color=c, zorder=3)
-        ax.annotate(r["model"], (r["predict_time_ms_per_row"] * 1000, r["f1"]),
-                     textcoords="offset points", xytext=(8, 6), fontsize=9, color=INK)
-    ax.set_xscale("log")
-    ax.set_xlabel("Inference time per prediction (µs, log scale)")
-    ax.set_ylabel("F1 score (held-out test set)")
-    ax.set_ylim(0.70, 0.78)
-    ax.grid(True, linewidth=0.6, which="both", alpha=0.5)
-    ax.set_title("Accuracy vs. inference cost: Logistic Regression dominates on cost\nfor ≈1 point less F1",
-                  fontsize=11, loc="left")
-    fig.tight_layout()
+    cv = pd.read_csv(REPORTS_DIR / "cv_results.csv")
+    order = ["Logistic Regression", "Gradient Boosting", "Random Forest (default)"]
+    opt = opt.set_index("model").loc[order].reset_index()
+    labels = ["Logistic Regression", "Gradient Boosting", "Random Forest"]
+    colors = [BLUE, YELLOW, AQUA]
+    cv_means = np.array([cv["logreg_f1"].mean(), cv["gb_f1"].mean(), cv["rf_f1"].mean()])
+
+    panels = [
+        ("F1 on test set (higher is better)", opt["f1"].to_numpy(), False, "{:.3f}", (0, 1)),
+        ("Mean F1 across 5 CV folds (higher is better)", cv_means, False, "{:.3f}", (0, 1)),
+        ("Training time, ms (log scale)", opt["fit_time_s"].to_numpy() * 1000, True, "{:,.1f}", None),
+        ("Prediction time per row, µs (log scale)", opt["predict_time_ms_per_row"].to_numpy() * 1000, True, "{:,.1f}", None),
+        ("Saved model size, KB (log scale)", opt["model_size_kb"].to_numpy(), True, "{:,.1f}", None),
+    ]
+
+    fig, axes = plt.subplots(2, 3, figsize=(12, 5.6), sharey=True)
+    axes.ravel()[-1].set_visible(False)
+    y = np.arange(len(order))[::-1]  # first model at the top
+    for ax, (title, vals, logx, fmt, xlim) in zip(axes.ravel(), panels):
+        ax.scatter(vals, y, s=140, color=colors, zorder=3)
+        for v, yy in zip(vals, y):
+            ax.annotate(fmt.format(v), (v, yy), textcoords="offset points", xytext=(0, 11),
+                        ha="center", fontsize=9, color=INK)
+        if logx:
+            ax.set_xscale("log")
+            ax.set_xlim(vals.min() / 4, vals.max() * 4)
+        else:
+            ax.set_xlim(*xlim)
+        ax.set_ylim(-0.7, len(order) - 0.3)
+        ax.set_yticks(y)
+        ax.set_yticklabels(labels, fontsize=9)
+        ax.set_title(title, fontsize=10, loc="left")
+        ax.grid(True, axis="x", linewidth=0.6, alpha=0.6)
+    fig.suptitle("Similar test accuracy, but Logistic Regression is less stable over time", fontsize=12, x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
     fig.savefig(FIG_DIR / "06_accuracy_vs_cost.png", dpi=300)
     plt.close(fig)
 

@@ -17,24 +17,24 @@ divided by test-set size, to remove OS scheduling noise.
 | Random Forest (default) | 0.763 | 0.736 | 716.0 ms | 91.2 µs | 1.07 MB | 4,175.3 KB |
 | Gradient Boosting | 0.761 | 0.724 | 432.3 ms | 1.54 µs | 0.50 MB | 135.8 KB |
 
-### Key finding: Logistic Regression is nearly as accurate, for a fraction of the cost
+### Key finding: on one test split the models look alike, but cross-validation separates them
 
-Logistic Regression reaches F1 = 0.756, within **1 percentage point** of the
-Random Forest's 0.763 — but trains **~63x faster** (11ms vs 716ms), predicts
-**~84x faster per row** (1.1µs vs 91.2µs), and the saved model is **~2,300x
-smaller** (1.8KB vs 4.2MB). Random Forest does win more clearly on ROC-AUC
-(0.736 vs 0.708), meaning it ranks borderline cases somewhat better, which
-matters if the deployed system needs a tunable decision threshold rather
-than a fixed one.
+On the single held-out test period the three models are within 1 point of F1
+(0.756 to 0.763), so accuracy there does not decide between them. Cost does:
+relative to the Random Forest, Logistic Regression trains ~63x faster
+(11 ms vs 716 ms), predicts ~84x faster per row (1.1 µs vs 91.2 µs) and is
+~2,300x smaller (1.8 KB vs 4.2 MB). Gradient Boosting sits in between: ~1.7x
+faster to train than the Random Forest, ~59x faster per prediction (1.5 µs)
+and ~31x smaller (136 KB).
 
-**Engineering interpretation:** for a real building-monitoring deployment —
-where this model would run continuously on cheap edge hardware or be
-retrained often as more data arrives — Logistic Regression's near-identical
-accuracy at a fraction of the compute/memory footprint makes it the more
-defensible production choice, despite Random Forest being the headline
-"improved model" in the earlier accuracy-only comparison. This is the kind
-of trade-off the brief asks for explicitly: the best model by raw accuracy
-is not automatically the right final design once cost is considered.
+But a single 9-day test period is a weak basis for choosing a model. The
+5-fold time-series cross-validation in `docs/model_results.md` (mean F1:
+Gradient Boosting 0.702, Random Forest 0.698, Logistic Regression 0.536) shows
+that Logistic Regression is clearly less reliable over time (it drops to 0.37
+in fold 4, where the tree models score about 0.8), even though it matched them
+on the test period. An earlier version of this analysis recommended Logistic
+Regression on the test-split result alone; the cross-validation check
+overturned that recommendation.
 
 ## Hyperparameter tuning: a cautionary result, not a success story
 
@@ -76,15 +76,26 @@ models.
 
 ## Final design decision
 
-Given the full picture — accuracy, robustness under CV, runtime, memory,
-and the tuning result above — **Logistic Regression is recommended as the
-final design**, not Random Forest. The 1-point F1 gap from Random Forest is
-smaller than the fold-to-fold noise already observed in cross-validation,
-so it is not a reliably real difference, while the runtime/memory/size
-advantages are large, consistent, and would matter in a real low-cost
-building-sensor deployment. Random Forest remains useful in this project as
-the richer model used for the feature-importance and schedule-vs-environment
-sensitivity analysis (`docs/model_results.md`), where its non-linearity and
-built-in feature-importance output were genuinely useful tools for
-*understanding* the problem, even though it isn't the model recommended for
-*deployment*.
+**Gradient Boosting is recommended as the final design.** It matches the
+Random Forest on accuracy (test F1 0.761 vs 0.763; mean CV F1 0.702 vs 0.698,
+with the smallest fold-to-fold spread of the four models, std 0.180), but is
+~59x faster per prediction (1.5 µs vs 91.2 µs) and ~31x smaller (136 KB vs
+4.2 MB), so on accuracy-plus-cost it dominates the Random Forest. It costs
+more than Logistic Regression (~38x the training time, ~76x the model size,
+1.4x the prediction time), but those costs are small in absolute terms
+(432 ms to train, 136 KB to store), while Logistic Regression's mean F1 in
+cross-validation is about 0.17 lower than Gradient Boosting's. Training time is not a constraint here
+because the model would be retrained only occasionally.
+
+**Logistic Regression** remains the right choice only if a few kilobytes of
+memory were a hard constraint and the single-test-split result were the whole
+story, which the cross-validation shows it is not. **Random Forest** remains
+useful in this project as the richer model used for the feature-importance and
+schedule-vs-environment sensitivity analysis (`docs/model_results.md`), even
+though it is not the model recommended for deployment.
+
+Limits of this conclusion: Gradient Boosting was used at library defaults and
+not tuned; the CV gap between Gradient Boosting and Random Forest (0.004) is far
+smaller than the fold-to-fold noise, so the choice between them rests on cost,
+not accuracy; and timings come from one machine, so only the relative ordering
+should be relied on.

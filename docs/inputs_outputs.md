@@ -22,8 +22,9 @@ human-readable summary the brief asks for.
 |---|---|---|
 | `data/processed/room_dataset.csv` | CSV, one row per 15-minute interval | The joined modelling dataset: environmental readings + occupancy label for one room. Input to `train_model.py`. |
 | `reports/sensor_zone_correlation_matrix.csv`, `sensor_zone_match.csv` | CSV | Evidence for which sensor/zone pairing was used, and how confident that inference is (see `docs/data_audit.md`) |
-| `reports/model_comparison.csv`, `cv_results.csv`, `feature_importance.csv`, `confusion_matrices.txt` | CSV / text | Model performance metrics, used directly in `docs/model_results.md` |
+| `reports/model_comparison.csv`, `cv_results.csv` (F1 per fold for all four models), `feature_importance.csv`, `confusion_matrices.txt` | CSV / text | Model performance metrics, used directly in `docs/model_results.md` |
 | `reports/optimisation_comparison.csv`, `hyperparam_tuning.csv`, `sensitivity_env_only.csv` | CSV | Runtime/memory/accuracy trade-off results, used in `docs/optimisation.md` |
+| `reports/cv_fold_dates.csv`, `daily_occupancy.csv` | CSV | Dates and occupied share of each cross-validation fold, and of each calendar day; used to explain the weak fold in `docs/model_results.md` |
 | `reports/figures/*.png` | PNG, 300dpi | Report/slide-ready charts |
 | `reports/test_results.xml`, `test_report.html` | JUnit XML / HTML | Automated test results (see §5) |
 
@@ -52,7 +53,7 @@ human-readable summary the brief asks for.
 
 ### `train_model.best_co2_threshold(co2, y) -> float`
 - **Input:** `co2` — 1D array of CO2 readings; `y` — matching 0/1 occupancy labels.
-- **Output:** a single float threshold (ppm) that maximises F1 on the given data, scanned over 2nd–99th percentile candidates.
+- **Output:** a single float threshold (ppm) that maximises F1 on the given data, scanned over 5th–99th percentile candidates (every 2nd percentile) of the training CO2 values.
 - **Domain:** both arrays must be the same length and contain no NaNs (enforced upstream by `build_dataset.py`'s `dropna()`).
 
 ### `train_model.evaluate(y_true, y_pred, y_score=None) -> dict`

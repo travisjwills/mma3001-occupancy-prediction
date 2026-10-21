@@ -22,20 +22,35 @@ train and test, inflating reported accuracy.
 | Random Forest (all env + time features) | 0.724 | 0.703 | 0.833 | **0.763** | 0.736 |
 
 5-fold `TimeSeriesSplit` cross-validation on the training set (checks
-stability over time rather than relying on one lucky split):
+stability over time rather than relying on one lucky split), run for all four
+models:
 
-| | mean F1 | std F1 |
-|---|---|---|
-| Baseline | 0.519 | 0.258 |
-| Random Forest | 0.698 | 0.197 |
+| Model | mean F1 | std F1 | F1 in folds 0 to 4 |
+|---|---|---|---|
+| Baseline (CO2 threshold) | 0.519 | 0.258 | 0.705, 0.696, 0.768, 0.307, 0.118 |
+| Logistic Regression | 0.536 | 0.216 | 0.825, 0.652, 0.619, 0.219, 0.366 |
+| Random Forest | 0.698 | 0.197 | 0.810, 0.760, 0.806, 0.305, 0.807 |
+| Gradient Boosting | 0.702 | 0.180 | 0.806, 0.764, 0.809, 0.343, 0.786 |
 
-The Random Forest outperforms the single-variable baseline on every fold but
-one (fold 3, where both models collapse to F1≈0.3 — worth investigating
-further, e.g. a public holiday or unusual occupancy pattern in that week).
-Both models' large fold-to-fold variance (std ≈ 0.2–0.26) is itself a
-finding: **5 weeks of training data is not enough for a stable estimate of
-real-world performance**, and this should be stated plainly as a limitation
-rather than reporting only the single best test-set number.
+Random Forest and Gradient Boosting are the most stable and are
+indistinguishable from each other (0.698 vs 0.702). Logistic Regression looks
+as good as them on the single held-out test period (F1 0.756) but is clearly
+weaker across time: its mean fold F1 is about 0.16 lower, and it falls to
+0.62 and 0.37 in folds 2 and 4 where the tree models score about 0.8. A
+plausible, untested reason is that a linear model uses hour of day as a single
+number, so it cannot learn a daytime-shaped occupancy pattern.
+
+**Fold 3 is weak for every model** (F1 0.22 to 0.34). `src/cv_fold_diagnostics.py`
+shows why: fold 3 covers 24-30 May (Melbourne time), when the room was
+occupied about 75% of the time on Saturday 25 and Sunday 26 May (earlier
+Saturdays were under 20%) and almost empty on Tuesday 28 May (1%). The usual
+weekday/weekend pattern was reversed, so models trained on earlier weeks were
+caught out. Why the room's use changed is not known.
+
+The large fold-to-fold variance (std about 0.18 to 0.26 for every model) is
+itself a finding: **5 weeks of training data is not enough for a stable
+estimate of real-world performance**, and this should be stated plainly as a
+limitation rather than reporting only the single best test-set number.
 
 ## Feature importance (Random Forest)
 
