@@ -1,7 +1,7 @@
 # MMA3001 — Predicting Room Occupancy from Environmental Sensor Data
 
 Individual project for MMA3001 (Numerical Methods and Machine Learning),
-using Monash Smart Infrastructure's Dataset 2 (Living Lab occupancy and
+using Monash Smart Infrastructure: (MMA3001 Dataset 2), (Living Lab occupancy and
 environmental sensors, Building 60/69).
 
 **Status:** data audit, modelling, optimisation, figures, and repo
@@ -71,7 +71,7 @@ cross-validation fold is weak for every model and a check for whether the
 model is just learning the room's schedule rather than reading the air (it
 isn't, mostly).
 
-### Extension: how many people? (headcount regression)
+### Headcount Regression
 
 The same data, split and folds are also used to predict the number of people
 in the room (0 to 22) with Decision Tree Regression, its depth chosen by
@@ -145,11 +145,4 @@ data-sharing terms for the MMA3001 unit.
 AI assistance (Claude, Anthropic) was used throughout development of this
 repository; the full disclosure — what it was used for, how outputs were
 verified, and which decisions were made — will be written
-in `docs/ai_use.md` alongside the final report.
-
-## Remaining work
-
-- [ ] Written report (5-10 pages, pulling together `docs/data_audit.md`,
-      `docs/model_results.md`, `docs/optimisation.md`, `docs/inputs_outputs.md`)
-- [ ] `docs/ai_use.md` — full AI-use disclosure and critical reflection
-- [ ] Presentation slides
+in the final report.
