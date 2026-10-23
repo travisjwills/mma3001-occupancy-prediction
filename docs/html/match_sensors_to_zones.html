@@ -52,83 +52,16 @@ the&nbsp;inferred&nbsp;pairing&nbsp;with&nbsp;confidence&nbsp;margins.</span></p
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
     
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-linear_sum_assignment"><strong>linear_sum_assignment</strong></a>(cost_matrix, maximize=False)</dt><dd><span class="code">Solve&nbsp;the&nbsp;linear&nbsp;sum&nbsp;assignment&nbsp;problem.<br>
-&nbsp;<br>
-Parameters<br>
-----------<br>
-cost_matrix&nbsp;:&nbsp;array<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;cost&nbsp;matrix&nbsp;of&nbsp;the&nbsp;bipartite&nbsp;graph.<br>
-&nbsp;<br>
-maximize&nbsp;:&nbsp;bool&nbsp;(default:&nbsp;False)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;a&nbsp;maximum&nbsp;weight&nbsp;matching&nbsp;if&nbsp;true.<br>
-&nbsp;<br>
-Returns<br>
--------<br>
-row_ind,&nbsp;col_ind&nbsp;:&nbsp;array<br>
-&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;array&nbsp;of&nbsp;row&nbsp;indices&nbsp;and&nbsp;one&nbsp;of&nbsp;corresponding&nbsp;column&nbsp;indices&nbsp;giving<br>
-&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;optimal&nbsp;assignment.&nbsp;The&nbsp;cost&nbsp;of&nbsp;the&nbsp;assignment&nbsp;can&nbsp;be&nbsp;computed<br>
-&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;``cost_matrix[row_ind,&nbsp;col_ind].sum()``.&nbsp;The&nbsp;row&nbsp;indices&nbsp;will&nbsp;be<br>
-&nbsp;&nbsp;&nbsp;&nbsp;sorted;&nbsp;in&nbsp;the&nbsp;case&nbsp;of&nbsp;a&nbsp;square&nbsp;cost&nbsp;matrix&nbsp;they&nbsp;will&nbsp;be&nbsp;equal&nbsp;to<br>
-&nbsp;&nbsp;&nbsp;&nbsp;``numpy.arange(cost_matrix.shape[0])``.<br>
-&nbsp;<br>
-See&nbsp;Also<br>
---------<br>
-scipy.sparse.csgraph.min_weight_full_bipartite_matching&nbsp;:&nbsp;for&nbsp;sparse&nbsp;inputs<br>
-&nbsp;<br>
-Notes<br>
------<br>
-The&nbsp;linear&nbsp;sum&nbsp;assignment&nbsp;problem&nbsp;[1]_&nbsp;is&nbsp;also&nbsp;known&nbsp;as&nbsp;minimum&nbsp;weight<br>
-matching&nbsp;in&nbsp;bipartite&nbsp;graphs.&nbsp;A&nbsp;problem&nbsp;instance&nbsp;is&nbsp;described&nbsp;by&nbsp;a&nbsp;matrix<br>
-C,&nbsp;where&nbsp;each&nbsp;C[i,j]&nbsp;is&nbsp;the&nbsp;cost&nbsp;of&nbsp;matching&nbsp;vertex&nbsp;i&nbsp;of&nbsp;the&nbsp;first&nbsp;partite<br>
-set&nbsp;(a&nbsp;'worker')&nbsp;and&nbsp;vertex&nbsp;j&nbsp;of&nbsp;the&nbsp;second&nbsp;set&nbsp;(a&nbsp;'job').&nbsp;The&nbsp;goal&nbsp;is&nbsp;to<br>
-find&nbsp;a&nbsp;complete&nbsp;assignment&nbsp;of&nbsp;workers&nbsp;to&nbsp;jobs&nbsp;of&nbsp;minimal&nbsp;cost.<br>
-&nbsp;<br>
-Formally,&nbsp;let&nbsp;X&nbsp;be&nbsp;a&nbsp;boolean&nbsp;matrix&nbsp;where&nbsp;:math:`X[i,j]&nbsp;=&nbsp;1`&nbsp;iff&nbsp;row&nbsp;i&nbsp;is<br>
-assigned&nbsp;to&nbsp;column&nbsp;j.&nbsp;Then&nbsp;the&nbsp;optimal&nbsp;assignment&nbsp;has&nbsp;cost<br>
-&nbsp;<br>
-..&nbsp;math::<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\min&nbsp;\sum_i&nbsp;\sum_j&nbsp;C_{i,j}&nbsp;X_{i,j}<br>
-&nbsp;<br>
-where,&nbsp;in&nbsp;the&nbsp;case&nbsp;where&nbsp;the&nbsp;matrix&nbsp;X&nbsp;is&nbsp;square,&nbsp;each&nbsp;row&nbsp;is&nbsp;assigned&nbsp;to<br>
-exactly&nbsp;one&nbsp;column,&nbsp;and&nbsp;each&nbsp;column&nbsp;to&nbsp;exactly&nbsp;one&nbsp;row.<br>
-&nbsp;<br>
-This&nbsp;function&nbsp;can&nbsp;also&nbsp;solve&nbsp;a&nbsp;generalization&nbsp;of&nbsp;the&nbsp;classic&nbsp;assignment<br>
-problem&nbsp;where&nbsp;the&nbsp;cost&nbsp;matrix&nbsp;is&nbsp;rectangular.&nbsp;If&nbsp;it&nbsp;has&nbsp;more&nbsp;rows&nbsp;than<br>
-columns,&nbsp;then&nbsp;not&nbsp;every&nbsp;row&nbsp;needs&nbsp;to&nbsp;be&nbsp;assigned&nbsp;to&nbsp;a&nbsp;column,&nbsp;and&nbsp;vice<br>
-versa.<br>
-&nbsp;<br>
-This&nbsp;implementation&nbsp;is&nbsp;a&nbsp;modified&nbsp;Jonker-Volgenant&nbsp;algorithm&nbsp;with&nbsp;no<br>
-initialization,&nbsp;described&nbsp;in&nbsp;ref.&nbsp;[2]_.<br>
-&nbsp;<br>
-..&nbsp;versionadded::&nbsp;0.17.0<br>
-&nbsp;<br>
-References<br>
-----------<br>
-..&nbsp;[1]&nbsp;<a href="https://en.wikipedia.org/wiki/Assignment_problem">https://en.wikipedia.org/wiki/Assignment_problem</a><br>
-&nbsp;<br>
-..&nbsp;[2]&nbsp;DF&nbsp;Crouse.&nbsp;On&nbsp;implementing&nbsp;2D&nbsp;rectangular&nbsp;assignment&nbsp;algorithms.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*IEEE&nbsp;Transactions&nbsp;on&nbsp;Aerospace&nbsp;and&nbsp;Electronic&nbsp;Systems*,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;52(4):1679-1696,&nbsp;August&nbsp;2016,&nbsp;:doi:`10.1109/TAES.2016.140952`<br>
-&nbsp;<br>
-Examples<br>
---------<br>
-&gt;&gt;&gt;&nbsp;import&nbsp;numpy&nbsp;as&nbsp;np<br>
-&gt;&gt;&gt;&nbsp;cost&nbsp;=&nbsp;np.array([[4,&nbsp;1,&nbsp;3],&nbsp;[2,&nbsp;0,&nbsp;5],&nbsp;[3,&nbsp;2,&nbsp;2]])<br>
-&gt;&gt;&gt;&nbsp;from&nbsp;scipy.optimize&nbsp;import&nbsp;linear_sum_assignment<br>
-&gt;&gt;&gt;&nbsp;row_ind,&nbsp;col_ind&nbsp;=&nbsp;<a href="#-linear_sum_assignment">linear_sum_assignment</a>(cost)<br>
-&gt;&gt;&gt;&nbsp;col_ind<br>
-array([1,&nbsp;0,&nbsp;2])<br>
-&gt;&gt;&gt;&nbsp;cost[row_ind,&nbsp;col_ind].sum()<br>
-5</span></dd></dl>
- <dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
+<td class="singlecolumn"><dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
 </td></tr></table><p>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>ENV_PATH</strong> = '/mnt/user-data/uploads/5EnvSensor_MayToDec2024_180kRows.csv'<br>
+<td class="singlecolumn"><strong>ENV_PATH</strong> = PosixPath('/Users/traviswills/Downloads/mma3001-...2/data/raw/5EnvSensor_MayToDec2024_180kRows.csv')<br>
 <strong>FREQ</strong> = '15min'<br>
-<strong>OCC_PATH</strong> = '/home/claude/rawdata/occupancy/5occupancySensor_MayToDec2024_9MRows.csv'<br>
-<strong>OUT_DIR</strong> = PosixPath('reports')</td></tr></table>
+<strong>OCC_PATH</strong> = PosixPath('/Users/traviswills/Downloads/mma3001-...ta/raw/5occupancySensor_MayToDec2024_9MRows.csv')<br>
+<strong>OUT_DIR</strong> = PosixPath('reports')<br>
+<strong>RAW_DIR</strong> = PosixPath('data/raw')</td></tr></table>
 </body></html>
