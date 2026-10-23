@@ -107,7 +107,7 @@ pip install -r requirements.txt
    python src/train_model.py              # baseline vs Random Forest + validation
    python src/sensitivity_env_only.py     # time-of-day sensitivity check
    python src/cv_fold_diagnostics.py      # dates/occupancy of each CV fold (explains the weak fold)
-   python src/headcount_regression.py     # extension: predict headcount with Decision Tree Regression
+   python src/headcount_regression.py     # predict headcount with Decision Tree Regression
    python src/optimisation.py             # runtime/memory/accuracy comparison + tuning
    python src/make_figures.py             # generates reports/figures/*.png
    ```
