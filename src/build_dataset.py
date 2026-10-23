@@ -20,8 +20,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 from load_env import load_env_long, resample_sensor_variable
 from load_occupancy import load_occupancy_events, resample_zone_headcount
 
-ENV_PATH = "/mnt/user-data/uploads/5EnvSensor_MayToDec2024_180kRows.csv"
-OCC_PATH = "/home/claude/rawdata/occupancy/5occupancySensor_MayToDec2024_9MRows.csv"
+RAW_DIR = Path(__file__).resolve().parents[1] / "data" / "raw"
+ENV_PATH = RAW_DIR / "5EnvSensor_MayToDec2024_180kRows.csv"
+OCC_PATH = RAW_DIR / "5occupancySensor_MayToDec2024_9MRows.csv"
 SENSOR_ID = 6012002000869
 ZONE_ID = "3e5a14df-4b14-4ea5-bb9d-46577c6dc9c8"
 FREQ = "15min"
