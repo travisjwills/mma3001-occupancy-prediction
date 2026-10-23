@@ -5,7 +5,7 @@ using Monash Smart Infrastructure: (MMA3001 Dataset 2), (Living Lab occupancy an
 environmental sensors, Building 60/69).
 
 **Status:** data audit, modelling, optimisation, figures, and repo
-infrastructure (tests/docs/license) complete. Written report in progress.
+infrastructure (tests/docs/license) complete.
 
 ## Problem
 
@@ -144,5 +144,4 @@ data-sharing terms for the MMA3001 unit.
 ## AI use disclosure
 AI assistance (Claude, Anthropic) was used throughout development of this
 repository; the full disclosure — what it was used for, how outputs were
-verified, and which decisions were made — will be written
-in the final report.
+verified, and which decisions were made — is written in the final report.
