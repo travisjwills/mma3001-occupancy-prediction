@@ -54,7 +54,7 @@ see `docs/data_audit.md`), 4,099 samples, chronological 80/20 split. "CV" is
 |---|---|---|---|---|---|---|
 | Baseline: CO2 threshold rule | 0.345 | 0.568 | 0.519 | — | — | — |
 | Logistic Regression | 0.756 | 0.708 | 0.536 | 11.3 ms | 1.1 µs | 1.8 KB |
-| Random Forest | 0.763 | 0.736 | 0.698 | 716.0 ms | 91.2 µs | 4.2 MB |
+| Random Forest | 0.763 | 0.736 | 0.698 | 716.0 ms | 91.2 µs | 4.1 MB |
 | **Gradient Boosting (recommended final model)** | 0.761 | 0.724 | 0.702 | 432.3 ms | 1.5 µs | 135.8 KB |
 
 All three machine-learning models are within 1 point of F1 on the held-out
