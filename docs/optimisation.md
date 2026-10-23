@@ -23,7 +23,7 @@ On the single held-out test period the three models are within 1 point of F1
 (0.756 to 0.763), so accuracy there does not decide between them. Cost does:
 relative to the Random Forest, Logistic Regression trains ~63x faster
 (11 ms vs 716 ms), predicts ~84x faster per row (1.1 µs vs 91.2 µs) and is
-~2,300x smaller (1.8 KB vs 4.2 MB). Gradient Boosting sits in between: ~1.7x
+~2,300x smaller (1.8 KB vs 4.1 MB). Gradient Boosting sits in between: ~1.7x
 faster to train than the Random Forest, ~59x faster per prediction (1.5 µs)
 and ~31x smaller (136 KB).
 
@@ -80,7 +80,7 @@ models.
 Random Forest on accuracy (test F1 0.761 vs 0.763; mean CV F1 0.702 vs 0.698,
 with the smallest fold-to-fold spread of the four models, std 0.180), but is
 ~59x faster per prediction (1.5 µs vs 91.2 µs) and ~31x smaller (136 KB vs
-4.2 MB), so on accuracy-plus-cost it dominates the Random Forest. It costs
+4.1 MB), so on accuracy-plus-cost it dominates the Random Forest. It costs
 more than Logistic Regression (~38x the training time, ~76x the model size,
 1.4x the prediction time), but those costs are small in absolute terms
 (432 ms to train, 136 KB to store), while Logistic Regression's mean F1 in
